@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import compression from 'compression';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,6 +20,9 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Serve compressed responses first
+app.use(compression());
 
 // Security and utility Middlewares - Disable CSP to allow loading UI scripts & style assets
 app.use(helmet({

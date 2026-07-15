@@ -122,25 +122,58 @@ const saveLocalState = () => {
   localStorage.setItem('sg_stadium_state', JSON.stringify(localState));
 };
 
+// Safe request cache and deduplication tables
+const requestCache = {};
+const inFlightRequests = {};
+
 // Safe request wrapper
 async function request(endpoint, options = {}) {
-  try {
-    const url = `${STATUS_API_BASE}${endpoint}`;
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      ...options
-    });
-    
-    if (!response.ok) {
-      throw new Error(`API error ${response.status}`);
+  const method = options.method || 'GET';
+  const cacheKey = `${method}:${endpoint}:${options.body || ''}`;
+
+  if (method === 'GET') {
+    const cached = requestCache[cacheKey];
+    if (cached && Date.now() - cached.timestamp < 1000) {
+      return cached.data;
     }
-    return await response.json();
-  } catch (error) {
-    console.warn(`⚠️ Backend unavailable. Falling back to local storage simulation. (${error.message})`);
-    return handleClientFallback(endpoint, options);
   }
+
+  if (inFlightRequests[cacheKey]) {
+    return inFlightRequests[cacheKey];
+  }
+
+  const promise = (async () => {
+    try {
+      const url = `${STATUS_API_BASE}${endpoint}`;
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        ...options
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error ${response.status}`);
+      }
+      const data = await response.json();
+      
+      if (method === 'GET') {
+        requestCache[cacheKey] = {
+          data,
+          timestamp: Date.now()
+        };
+      }
+      return data;
+    } catch (error) {
+      console.warn(`⚠️ Backend unavailable. Falling back to local storage simulation. (${error.message})`);
+      return handleClientFallback(endpoint, options);
+    } finally {
+      delete inFlightRequests[cacheKey];
+    }
+  })();
+
+  inFlightRequests[cacheKey] = promise;
+  return promise;
 }
 
 // Client-side simulated controllers (Matches backend behavior)
@@ -244,30 +277,66 @@ export const ApiService = {
   broadcastEmergency: (message) => request('/emergency', { method: 'POST', body: JSON.stringify({ message }) })
 };
 
+// AI cache structures
+const aiCache = {};
+const inFlightAI = {};
+
+async function cachedAIFetch(endpoint, body) {
+  const cacheKey = `${endpoint}:${JSON.stringify(body)}`;
+  
+  if (aiCache[cacheKey]) {
+    return aiCache[cacheKey];
+  }
+  
+  if (inFlightAI[cacheKey]) {
+    return inFlightAI[cacheKey];
+  }
+  
+  const promise = (async () => {
+    const response = await fetch(`${AI_API_BASE}${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`AI API error ${response.status}`);
+    }
+    
+    const data = await response.json();
+    let result;
+    if (endpoint === '/match-assistant') result = data.reply;
+    else if (endpoint === '/translate') result = data.translatedText;
+    else if (endpoint === '/incident-summary') result = data.summaryData;
+    else if (endpoint === '/priority') result = data.priorityData;
+    else if (endpoint === '/food-recommendation') result = data.recommendation;
+    else if (endpoint === '/transit-eco') result = data.recommendation;
+    
+    aiCache[cacheKey] = result;
+    return result;
+  })();
+  
+  inFlightAI[cacheKey] = promise;
+  try {
+    return await promise;
+  } finally {
+    delete inFlightAI[cacheKey];
+  }
+}
+
 // AI assistant APIs - if backend is down, calls local logic mimicking responses
 export const AiService = {
   askMatchAssistant: async (query, chatHistory = []) => {
     try {
-      const response = await fetch(`${AI_API_BASE}/match-assistant`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, chatHistory })
-      });
-      return (await response.json()).reply;
+      return await cachedAIFetch('/match-assistant', { query, chatHistory });
     } catch {
-      // Simulate client-side Match Assistant
       return simulateClientAIResponse('match-assistant', { query });
     }
   },
   
   translateText: async (text, targetLanguage) => {
     try {
-      const response = await fetch(`${AI_API_BASE}/translate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, targetLanguage })
-      });
-      return (await response.json()).translatedText;
+      return await cachedAIFetch('/translate', { text, targetLanguage });
     } catch {
       return simulateClientAIResponse('translate', { text, targetLanguage });
     }
@@ -275,12 +344,7 @@ export const AiService = {
 
   getIncidentSummary: async (description, category) => {
     try {
-      const response = await fetch(`${AI_API_BASE}/incident-summary`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description, category })
-      });
-      return (await response.json()).summaryData;
+      return await cachedAIFetch('/incident-summary', { description, category });
     } catch {
       return simulateClientAIResponse('incident-summary', { description, category });
     }
@@ -288,12 +352,7 @@ export const AiService = {
 
   getMaintenancePriority: async (details) => {
     try {
-      const response = await fetch(`${AI_API_BASE}/priority`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ details })
-      });
-      return (await response.json()).priorityData;
+      return await cachedAIFetch('/priority', { details });
     } catch {
       return simulateClientAIResponse('priority', { details });
     }
@@ -301,12 +360,7 @@ export const AiService = {
 
   getFoodRecommendation: async (dietaryPreference, crowdDensity = 'Medium', gatesOccupancy = '') => {
     try {
-      const response = await fetch(`${AI_API_BASE}/food-recommendation`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dietaryPreference, crowdDensity, gatesOccupancy })
-      });
-      return (await response.json()).recommendation;
+      return await cachedAIFetch('/food-recommendation', { dietaryPreference, crowdDensity, gatesOccupancy });
     } catch {
       return simulateClientAIResponse('food-recommendation', { dietaryPreference, crowdDensity });
     }
@@ -314,12 +368,7 @@ export const AiService = {
 
   getTransitEco: async (destination, preference, gateLoad = '') => {
     try {
-      const response = await fetch(`${AI_API_BASE}/transit-eco`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ destination, preference, gateLoad })
-      });
-      return (await response.json()).recommendation;
+      return await cachedAIFetch('/transit-eco', { destination, preference, gateLoad });
     } catch {
       return simulateClientAIResponse('transit-eco', { destination, preference });
     }

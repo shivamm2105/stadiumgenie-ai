@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useStadiumState } from '../hooks/useStadiumState';
 import { AiService, ApiService } from '../services/api';
 import GlassCard from '../components/GlassCard';
@@ -6,6 +6,49 @@ import {
   Activity, ShieldAlert, Sparkles, RefreshCw, Check 
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+/**
+ * Localized input component for global emergency broadcasts.
+ * Prevents key events from causing full OrganizerDashboard re-renders.
+ */
+const BroadcastForm = React.memo(function BroadcastForm({ emergencyAlert, onBroadcast, broadcastLoading }) {
+  const [text, setText] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onBroadcast(text);
+    setText('');
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="flex gap-2">
+      <label htmlFor="broadcast-input" className="sr-only">Enter emergency warning broadcast text</label>
+      <input
+        id="broadcast-input"
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={emergencyAlert ? 'Clear alert by broadcasting blank...' : 'E.g., Severe lightning storm. Seek shelter.'}
+        aria-label="Broadcast alert text"
+        title="Broadcast alert text"
+        className="flex-grow bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-fifa-gold dark:text-white font-semibold"
+      />
+      <button
+        type="submit"
+        disabled={broadcastLoading}
+        aria-label={emergencyAlert ? 'Clear broadcast alert' : 'Send broadcast alert'}
+        title={emergencyAlert ? 'Clear broadcast alert' : 'Send broadcast alert'}
+        className={`text-white text-xs font-bold px-4 py-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold cursor-pointer ${
+          emergencyAlert 
+            ? 'bg-slate-700 hover:bg-slate-600' 
+            : 'bg-red-700 hover:bg-red-800'
+        }`}
+      >
+        {emergencyAlert ? 'Clear' : 'Broadcast'}
+      </button>
+    </form>
+  );
+});
 
 export default function OrganizerDashboard() {
   const { 
@@ -19,14 +62,13 @@ export default function OrganizerDashboard() {
   const [analysisError, setAnalysisError] = useState(false);
 
   // Broadcast emergency states
-  const [broadcastText, setBroadcastText] = useState('');
   const [broadcastLoading, setBroadcastLoading] = useState(false);
 
-  // Filter out active vs resolved incidents
-  const activeIncidents = incidents.filter(i => i.status !== 'Resolved');
+  // Memoize active incidents to avoid re-filtering on every render
+  const activeIncidents = useMemo(() => incidents.filter(i => i.status !== 'Resolved'), [incidents]);
 
   // Trigger Gemini analysis of incident details
-  const handleAnalyzeIncident = async (incident) => {
+  const handleAnalyzeIncident = useCallback(async (incident) => {
     setSelectedIncId(incident.id);
     setAnalysisLoading(true);
     setAnalysisResult(null);
@@ -50,10 +92,10 @@ export default function OrganizerDashboard() {
     } finally {
       setAnalysisLoading(false);
     }
-  };
+  }, []);
 
   // Resolve incident
-  const handleResolveIncident = async (id) => {
+  const handleResolveIncident = useCallback(async (id) => {
     try {
       await ApiService.updateIncident(id, { status: 'Resolved' });
       if (selectedIncId === id) {
@@ -64,32 +106,31 @@ export default function OrganizerDashboard() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [selectedIncId, refreshState]);
 
   // Send global emergency broadcast
-  const handleBroadcast = async (e) => {
-    e.preventDefault();
+  const handleBroadcast = useCallback(async (message) => {
     if (broadcastLoading) return;
     setBroadcastLoading(true);
     try {
-      await ApiService.broadcastEmergency(broadcastText || null);
+      await ApiService.broadcastEmergency(message || null);
       refreshState();
     } catch (err) {
       console.error(err);
     } finally {
       setBroadcastLoading(false);
     }
-  };
+  }, [broadcastLoading, refreshState]);
 
-  // Chart data: hourly entry rates
-  const entryTelemetryData = [
+  // Chart data: hourly entry rates (static telemetry)
+  const entryTelemetryData = useMemo(() => [
     { time: '14:00', entries: 12000 },
     { time: '14:30', entries: 25000 },
     { time: '15:00', entries: 42000 },
     { time: '15:30', entries: 61000 },
     { time: '16:00', entries: 72000 },
     { time: '16:30', entries: 78500 }
-  ];
+  ], []);
 
   return (
     <div className="space-y-6">
@@ -245,32 +286,11 @@ export default function OrganizerDashboard() {
               Broadcast high-priority instructions to all visitor and volunteer devices instantly.
             </p>
 
-            <form onSubmit={handleBroadcast} className="flex gap-2">
-              <label htmlFor="broadcast-input" className="sr-only">Enter emergency warning broadcast text</label>
-              <input
-                id="broadcast-input"
-                type="text"
-                value={broadcastText}
-                onChange={(e) => setBroadcastText(e.target.value)}
-                placeholder={matchInfo.emergencyAlert ? 'Clear alert by broadcasting blank...' : 'E.g., Severe lightning storm. Seek shelter.'}
-                aria-label="Broadcast alert text"
-                title="Broadcast alert text"
-                className="flex-grow bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-fifa-gold dark:text-white font-semibold"
-              />
-              <button
-                type="submit"
-                disabled={broadcastLoading}
-                aria-label={matchInfo.emergencyAlert ? 'Clear broadcast alert' : 'Send broadcast alert'}
-                title={matchInfo.emergencyAlert ? 'Clear broadcast alert' : 'Send broadcast alert'}
-                className={`text-white text-xs font-bold px-4 py-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold cursor-pointer ${
-                  matchInfo.emergencyAlert 
-                    ? 'bg-slate-700 hover:bg-slate-600' 
-                    : 'bg-red-700 hover:bg-red-800'
-                }`}
-              >
-                {matchInfo.emergencyAlert ? 'Clear' : 'Broadcast'}
-              </button>
-            </form>
+            <BroadcastForm 
+              emergencyAlert={matchInfo.emergencyAlert}
+              onBroadcast={handleBroadcast}
+              broadcastLoading={broadcastLoading}
+            />
           </GlassCard>
 
           {/* Active Incident List */}

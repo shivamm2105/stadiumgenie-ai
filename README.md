@@ -90,11 +90,13 @@ graph TD
 ### Frontend Architecture
 - **State Management**: Distributed through React Contexts (`UserContext`, `ThemeContext`, `AccessibilityContext`, `StadiumStateContext`).
 - **Telemetry Syncing**: Context polls the backend every 5 seconds, keeping all dashboards updated on emergencies, maintenance logs, and checklists.
-- **Dynamic Code-Splitting**: Portal dashboards are code-split using `React.lazy` and `Suspense`, slicing initial load JavaScript from **802.89 kB** to **380.81 kB**.
+- **Dynamic Code-Splitting**: Portal dashboards are code-split using `React.lazy` and `Suspense`, slicing initial load JavaScript from **802.89 kB** to **380.81 kB**, with custom Vite manual chunks dividing recharts, framer-motion, lucide-react, and vendor dependencies into isolated, parallel bundles.
 
 ### Backend Architecture
 - **Security Sanitization**: Uses `express-validator` schema rules to sanitize input parameters, trim fields, and escape HTML tags (XSS guard).
 - **Graceful Error Triage**: Central error boundary middleware catches promise rejections and serves sanitized error outputs.
+- **Performance Optimization**: Gzip/Brotli compression middleware integrated on the Express server to minimize API transfer overhead.
+- **Optimized Caching Proxy**: Memory-cached `ApiService` requests with in-flight request deduplication to prevent duplicate concurrent network overhead.
 
 ---
 
