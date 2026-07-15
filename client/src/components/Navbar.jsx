@@ -3,10 +3,10 @@ import { useUser } from '../context/UserContext';
 import { useTheme } from '../context/ThemeContext';
 import { useAccessibility } from '../context/AccessibilityContext';
 import { useStadiumState } from '../context/StadiumStateContext';
-import { Sun, Moon, ShieldAlert, Users, Award, Radio } from 'lucide-react';
+import { Sun, Moon, ShieldAlert, Radio } from 'lucide-react';
 
 export default function Navbar() {
-  const { role, setRole, userName } = useUser();
+  const { role, setRole } = useUser();
   const { toggleTheme, isDark } = useTheme();
   const { handleSpeakHover } = useAccessibility();
   const { matchInfo } = useStadiumState();

@@ -7,7 +7,7 @@ import {
   Send, Compass, AlertOctagon, Utensils, 
   Clock, ShieldAlert, Sparkles, Navigation 
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+
 
 export default function FanDashboard() {
   const { gates, foodCourts, refreshState } = useStadiumState();
@@ -24,6 +24,7 @@ export default function FanDashboard() {
   const [dietary, setDietary] = useState('None');
   const [foodRec, setFoodRec] = useState('');
   const [foodLoading, setFoodLoading] = useState(false);
+  const [foodError, setFoodError] = useState(false);
 
   // Navigation Pathfinder State
   const [navTarget, setNavTarget] = useState(null); // 'gate-a', 'gate-b', 'restroom', 'food-court', 'accessibility'
@@ -34,10 +35,11 @@ export default function FanDashboard() {
   const [transitPref, setTransitPref] = useState('Metro');
   const [transitRec, setTransitRec] = useState('');
   const [transitLoading, setTransitLoading] = useState(false);
+  const [transitError, setTransitError] = useState(false);
 
   // Send message to AI chatbot
   const handleSendMessage = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!chatInput.trim() || chatLoading) return;
 
     const userMessage = chatInput;
@@ -52,8 +54,30 @@ export default function FanDashboard() {
       }));
       const reply = await AiService.askMatchAssistant(userMessage, history);
       setChatMessages(prev => [...prev, { role: 'assistant', text: reply }]);
-    } catch (err) {
-      setChatMessages(prev => [...prev, { role: 'assistant', text: 'Sorry, I am having trouble connecting to the network right now.' }]);
+    } catch {
+      setChatMessages(prev => [...prev, { role: 'assistant', text: 'Sorry, I am having trouble connecting to the network right now.', error: true }]);
+    } finally {
+      setChatLoading(false);
+    }
+  };
+
+  const handleRetrySendMessage = async () => {
+    const userMsgs = chatMessages.filter(m => m.role === 'user');
+    if (userMsgs.length === 0) return;
+    const lastUserMsg = userMsgs[userMsgs.length - 1].text;
+    
+    setChatMessages(prev => prev.filter((_, idx) => idx !== prev.length - 1));
+    setChatLoading(true);
+
+    try {
+      const history = chatMessages.slice(0, -1).map(msg => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.text }]
+      }));
+      const reply = await AiService.askMatchAssistant(lastUserMsg, history);
+      setChatMessages(prev => [...prev, { role: 'assistant', text: reply }]);
+    } catch {
+      setChatMessages(prev => [...prev, { role: 'assistant', text: 'Sorry, I am having trouble connecting to the network right now.', error: true }]);
     } finally {
       setChatLoading(false);
     }
@@ -62,11 +86,14 @@ export default function FanDashboard() {
   // Get food recommendation
   const handleGetFoodRec = async () => {
     setFoodLoading(true);
+    setFoodError(false);
+    setFoodRec('');
     try {
       const rec = await AiService.getFoodRecommendation(dietary, 'High', 'Gate A: 90%, Gate B: 35%');
       setFoodRec(rec);
-    } catch (err) {
-      setFoodRec('Failed to retrieve recommendation.');
+    } catch {
+      setFoodError(true);
+      setFoodRec('Failed to retrieve recommendation. Please check your connection.');
     } finally {
       setFoodLoading(false);
     }
@@ -74,14 +101,17 @@ export default function FanDashboard() {
 
   // Get transit recommendation
   const handleGetTransitEco = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!transitDest.trim() || transitLoading) return;
     setTransitLoading(true);
+    setTransitError(false);
+    setTransitRec('');
     try {
       const rec = await AiService.getTransitEco(transitDest, transitPref, 'Gate A: 90%, Gate B: 35%');
       setTransitRec(rec);
-    } catch (err) {
-      setTransitRec('Failed to fetch transit recommendation.');
+    } catch {
+      setTransitError(true);
+      setTransitRec('Failed to fetch transit recommendation. Please try again.');
     } finally {
       setTransitLoading(false);
     }
@@ -332,15 +362,25 @@ export default function FanDashboard() {
           {/* Messages Viewport */}
           <div className="flex-grow overflow-y-auto space-y-2 px-1 text-xs py-2 scrollbar-thin">
             {chatMessages.map((msg, index) => (
-              <div 
-                key={index}
-                className={`max-w-[85%] rounded-2xl p-3 leading-relaxed ${
-                  msg.role === 'assistant' 
-                    ? 'bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-slate-200 mr-auto rounded-tl-none' 
-                    : 'bg-fifa-blue text-white ml-auto rounded-tr-none'
-                }`}
-              >
-                {msg.text}
+              <div key={index} className="flex flex-col">
+                <div 
+                  className={`max-w-[85%] rounded-2xl p-3 leading-relaxed ${
+                    msg.role === 'assistant' 
+                      ? 'bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-slate-200 mr-auto rounded-tl-none' 
+                      : 'bg-fifa-blue text-white ml-auto rounded-tr-none'
+                  }`}
+                >
+                  {msg.text}
+                  {msg.error && (
+                    <button
+                      type="button"
+                      onClick={handleRetrySendMessage}
+                      className="mt-2 block bg-fifa-red hover:bg-red-700 text-white font-bold px-3 py-1 rounded-lg text-[10px] uppercase tracking-wider transition-colors"
+                    >
+                      🔄 Retry Call
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
             {chatLoading && (
@@ -417,8 +457,19 @@ export default function FanDashboard() {
 
             {foodRec && (
               <div className="mt-2 bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200/50 dark:border-white/10">
-                <span className="text-[10px] text-fifa-emerald font-bold uppercase tracking-wider block mb-1">AI Recommendation</span>
-                <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">{foodRec}</p>
+                <span className="text-[10px] text-fifa-emerald font-bold uppercase tracking-wider block mb-1">
+                  {foodError ? 'System Warning' : 'AI Recommendation'}
+                </span>
+                <p className={`text-xs leading-relaxed ${foodError ? 'text-fifa-red' : 'text-slate-700 dark:text-slate-300'}`}>{foodRec}</p>
+                {foodError && (
+                  <button
+                    type="button"
+                    onClick={handleGetFoodRec}
+                    className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] tracking-wide"
+                  >
+                    🔄 Try Again
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -480,8 +531,19 @@ export default function FanDashboard() {
 
             {transitRec && (
               <div className="mt-2 bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200/50 dark:border-white/10">
-                <span className="text-[10px] text-fifa-emerald font-bold uppercase tracking-wider block mb-1">AI Recommendation & Eco-Tip</span>
-                <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">{transitRec}</p>
+                <span className="text-[10px] text-fifa-emerald font-bold uppercase tracking-wider block mb-1">
+                  {transitError ? 'System Warning' : 'AI Recommendation & Eco-Tip'}
+                </span>
+                <p className={`text-xs leading-relaxed ${transitError ? 'text-fifa-red' : 'text-slate-700 dark:text-slate-300'}`}>{transitRec}</p>
+                {transitError && (
+                  <button
+                    type="button"
+                    onClick={() => handleGetTransitEco(null)}
+                    className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] tracking-wide"
+                  >
+                    🔄 Try Again
+                  </button>
+                )}
               </div>
             )}
           </form>

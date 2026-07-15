@@ -13,6 +13,7 @@ import {
   aiIncidentValidator,
   aiPriorityValidator,
   aiTransitValidator,
+  aiFoodValidator,
   validateRequest
 } from '../middleware/validation.js';
 
@@ -22,7 +23,7 @@ router.post('/match-assistant', aiMatchValidator, validateRequest, handleMatchAs
 router.post('/translate', aiTranslateValidator, validateRequest, handleTranslation);
 router.post('/incident-summary', aiIncidentValidator, validateRequest, handleIncidentSummary);
 router.post('/priority', aiPriorityValidator, validateRequest, handlePriorityScore);
-router.post('/food-recommendation', handleFoodRecommendation);
+router.post('/food-recommendation', aiFoodValidator, validateRequest, handleFoodRecommendation);
 router.post('/transit-eco', aiTransitValidator, validateRequest, handleTransitEco);
 
 export default router;

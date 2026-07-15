@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useStadiumState } from '../context/StadiumStateContext';
-import { useAccessibility } from '../context/AccessibilityContext';
 import { AiService, ApiService } from '../services/api';
 import GlassCard from '../components/GlassCard';
 import { 
@@ -10,15 +9,14 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 
 export default function OrganizerDashboard() {
   const { 
-    gates, parking, foodCourts, incidents, matchInfo, maintenanceTickets, refreshState 
+    incidents, matchInfo, refreshState 
   } = useStadiumState();
-  
-  const { handleSpeakHover } = useAccessibility();
 
   // AI analysis state for selected incident
   const [selectedIncId, setSelectedIncId] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [analysisError, setAnalysisError] = useState(false);
 
   // Broadcast emergency states
   const [broadcastText, setBroadcastText] = useState('');
@@ -32,13 +30,15 @@ export default function OrganizerDashboard() {
     setSelectedIncId(incident.id);
     setAnalysisLoading(true);
     setAnalysisResult(null);
+    setAnalysisError(false);
     try {
       const summary = await AiService.getIncidentSummary(incident.description, incident.category);
       setAnalysisResult(summary);
     } catch (err) {
       console.error(err);
+      setAnalysisError(true);
       setAnalysisResult({
-        summary: 'Incident telemetry failed. Critical resource allocation suggested.',
+        summary: 'Incident telemetry failed. Critical fallback suggestion triggered.',
         priority: 'High',
         suggestedActions: [
           'Dispatch immediate regional stewards.',
@@ -337,8 +337,22 @@ export default function OrganizerDashboard() {
                 analysisResult && (
                   <div className="space-y-3.5 text-xs">
                     <div>
-                      <span className="text-[9px] font-bold text-fifa-emerald uppercase block tracking-wider">AI Summary</span>
-                      <p className="dark:text-slate-200 text-slate-700 leading-relaxed font-semibold">{analysisResult.summary}</p>
+                      <span className="text-[9px] font-bold text-fifa-emerald uppercase block tracking-wider">
+                        {analysisError ? 'System Warning' : 'AI Summary'}
+                      </span>
+                      <p className={`dark:text-slate-200 text-slate-700 leading-relaxed font-semibold ${analysisError ? 'text-fifa-red font-bold' : ''}`}>{analysisResult.summary}</p>
+                      {analysisError && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const inc = incidents.find(i => i.id === selectedIncId);
+                            if (inc) handleAnalyzeIncident(inc);
+                          }}
+                          className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-2 py-1 rounded text-[10px]"
+                        >
+                          🔄 Retry Telemetry
+                        </button>
+                      )}
                     </div>
 
                     <div>

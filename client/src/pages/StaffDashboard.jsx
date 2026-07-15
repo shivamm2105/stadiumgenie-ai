@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useStadiumState } from '../context/StadiumStateContext';
-import { useAccessibility } from '../context/AccessibilityContext';
 import { AiService, ApiService } from '../services/api';
 import GlassCard from '../components/GlassCard';
 import { 
@@ -9,7 +8,6 @@ import {
 
 export default function StaffDashboard() {
   const { maintenanceTickets, refreshState } = useStadiumState();
-  const { handleSpeakHover } = useAccessibility();
 
   // Form states
   const [ticketDetails, setTicketDetails] = useState('');
@@ -19,18 +17,21 @@ export default function StaffDashboard() {
   // AI priority suggestions
   const [aiPrioritization, setAiPrioritization] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(false);
 
   // Submit description to Gemini for priority grading
   const handleGetAIEvaluation = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!ticketDetails.trim() || aiLoading) return;
     setAiLoading(true);
     setAiPrioritization(null);
+    setAiError(false);
     try {
       const evaluation = await AiService.getMaintenancePriority(ticketDetails);
       setAiPrioritization(evaluation);
     } catch (err) {
       console.error(err);
+      setAiError(true);
       setAiPrioritization({
         priority: 'Medium',
         etaMinutes: 20,
@@ -146,7 +147,9 @@ export default function StaffDashboard() {
           {aiPrioritization && (
             <div className="mt-4 bg-slate-900/60 border border-fifa-emerald/20 p-4 rounded-xl space-y-3.5">
               <div className="flex justify-between items-center">
-                <span className="text-[10px] text-fifa-emerald font-extrabold uppercase tracking-wider">Gemini Evaluation Summary</span>
+                <span className="text-[10px] text-fifa-emerald font-extrabold uppercase tracking-wider">
+                  {aiError ? 'System Warning' : 'Gemini Evaluation Summary'}
+                </span>
                 <span className={`px-2 py-0.5 rounded font-extrabold text-[9px] uppercase ${
                   aiPrioritization.priority === 'Critical' || aiPrioritization.priority === 'High'
                     ? 'bg-red-500/10 text-fifa-red'
@@ -155,6 +158,18 @@ export default function StaffDashboard() {
                   {aiPrioritization.priority} Priority suggested
                 </span>
               </div>
+
+              {aiError && (
+                <div className="text-xs">
+                  <button
+                    type="button"
+                    onClick={() => handleGetAIEvaluation(null)}
+                    className="bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px]"
+                  >
+                    🔄 Retry Evaluation
+                  </button>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>

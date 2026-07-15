@@ -209,17 +209,19 @@ npm run dev
 
 ---
 
-## 📤 Deployment Guide
+## 📤 Deployment Guide (Render Single-URL Fullstack)
 
-### Frontend Deployment (Vercel)
-Vite compiles the static code into the `client/dist` directory.
-1. Run `npx vercel` inside the `./client` directory.
-2. Vercel automatically detects the Vite config and publishes the distribution folder.
+StadiumGenie AI is configured as a monorepo that builds and deploys to a **single URL** on Render (combining the Express backend and the compiled React client).
 
-### Backend Deployment (Render/similar)
-Ensure that the server configuration file reads the environment variables correctly:
-1. Set the root directory to `./server` or configure start commands as `npm start --prefix server`.
-2. Configure your environment variable `GEMINI_API_KEY` on your provider's settings console.
+### Render Web Service Configuration
+1. **Root Directory**: `.` (leave as repository root)
+2. **Build Command**: `npm run build`
+3. **Start Command**: `npm run start`
+4. **Environment Variables**:
+   - `GEMINI_API_KEY`: *(Optional)* Your Google Gemini API Studio key. If not set, the platform operates in mock/offline mode with robust simulation.
+   - `NODE_ENV`: `production`
+
+Render will trigger `npm run build` which installs client and server packages concurrently, compiles the Vite React bundle into `client/dist`, and starts the Express server which serves the client bundle and proxies AI requests over a single endpoint.
 
 ---
 

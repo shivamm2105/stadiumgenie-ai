@@ -162,3 +162,68 @@ export const aiTransitValidator = [
     .isString().withMessage('Gate load parameters must be a string')
     .escape()
 ];
+
+export const aiFoodValidator = [
+  body('dietaryPreference')
+    .optional()
+    .trim()
+    .isString().withMessage('Dietary preference must be a string')
+    .escape(),
+  body('crowdDensity')
+    .optional()
+    .trim()
+    .isString().withMessage('Crowd density must be a string')
+    .escape(),
+  body('gatesOccupancy')
+    .optional()
+    .trim()
+    .isString().withMessage('Gates occupancy parameters must be a string')
+    .escape()
+];
+
+export const updateIncidentValidator = [
+  param('id')
+    .trim()
+    .notEmpty().withMessage('Incident ID parameter is required')
+    .isString().withMessage('Incident ID must be a string')
+    .escape(),
+  body('status')
+    .optional()
+    .trim()
+    .isIn(['Active', 'Resolved', 'Pending']).withMessage('Invalid status value')
+    .escape(),
+  body('priority')
+    .optional()
+    .trim()
+    .isIn(['Low', 'Medium', 'High', 'Critical']).withMessage('Invalid priority scale value')
+    .escape(),
+  body('suggestedActions')
+    .optional()
+    .isArray().withMessage('Suggested actions must be an array'),
+  body('staffNeeded')
+    .optional()
+    .trim()
+    .isString().withMessage('Staff needed must be a string')
+    .escape()
+];
+
+export const updateTaskValidator = [
+  param('id')
+    .trim()
+    .notEmpty().withMessage('Task ID parameter is required')
+    .isString().withMessage('Task ID must be a string')
+    .escape(),
+  body('status')
+    .trim()
+    .notEmpty().withMessage('Task status is required')
+    .isIn(['Pending', 'In Progress', 'Completed']).withMessage('Invalid task status')
+    .escape()
+];
+
+export const emergencyValidator = [
+  body('message')
+    .optional({ nullable: true })
+    .trim()
+    .isString().withMessage('Emergency message must be a string')
+    .escape()
+];

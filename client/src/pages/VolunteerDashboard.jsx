@@ -1,23 +1,21 @@
 import React, { useState } from 'react';
 import { useStadiumState } from '../context/StadiumStateContext';
-import { useAccessibility } from '../context/AccessibilityContext';
 import { AiService, ApiService } from '../services/api';
 import GlassCard from '../components/GlassCard';
 import { 
   Languages, Archive, CheckSquare, Sparkles, 
   MapPin, Clock, Search, PlusCircle 
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 export default function VolunteerDashboard() {
   const { lostAndFound, volunteerTasks, refreshState } = useStadiumState();
-  const { handleSpeakHover } = useAccessibility();
 
   // Translation States
   const [transInput, setTransInput] = useState('');
   const [targetLang, setTargetLang] = useState('Spanish');
   const [transOutput, setTransOutput] = useState('');
   const [transLoading, setTransLoading] = useState(false);
+  const [transError, setTransError] = useState(false);
 
   // Lost and Found States
   const [lfItem, setLfItem] = useState('');
@@ -39,11 +37,14 @@ export default function VolunteerDashboard() {
     const text = textToTranslate || transInput;
     if (!text.trim() || transLoading) return;
     setTransLoading(true);
+    setTransError(false);
+    setTransOutput('');
     try {
       const translated = await AiService.translateText(text, targetLang);
       setTransOutput(translated);
-    } catch (err) {
-      setTransOutput('Error performing translation.');
+    } catch {
+      setTransError(true);
+      setTransOutput('Error performing translation. Please check connection.');
     } finally {
       setTransLoading(false);
     }
@@ -188,9 +189,18 @@ export default function VolunteerDashboard() {
             {transOutput && (
               <div className="mt-3 bg-fifa-emerald/5 border border-fifa-emerald/25 p-4 rounded-xl">
                 <span className="text-[10px] text-fifa-emerald font-extrabold uppercase tracking-wider block mb-1">
-                  Translation ({targetLang})
+                  {transError ? 'System Warning' : `Translation (${targetLang})`}
                 </span>
-                <p className="text-sm dark:text-slate-200 text-slate-700 font-bold leading-relaxed">{transOutput}</p>
+                <p className={`text-sm dark:text-slate-200 text-slate-700 font-bold leading-relaxed ${transError ? 'text-fifa-red font-bold' : ''}`}>{transOutput}</p>
+                {transError && (
+                  <button
+                    type="button"
+                    onClick={() => handleTranslate()}
+                    className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] tracking-wide"
+                  >
+                    🔄 Try Again
+                  </button>
+                )}
               </div>
             )}
           </div>
