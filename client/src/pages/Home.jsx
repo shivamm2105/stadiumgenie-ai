@@ -87,17 +87,17 @@ export default function Home() {
             <div className="flex gap-4 text-center">
               <div>
                 <span className="text-xl font-black text-white block">78K+</span>
-                <span className="text-[10px] text-slate-400">Guests</span>
+                <span className="text-[10px] text-slate-300">Guests</span>
               </div>
               <div className="w-px bg-white/10 h-10 self-center"></div>
               <div>
                 <span className="text-xl font-black text-white block">02</span>
-                <span className="text-[10px] text-slate-400">Emergencies</span>
+                <span className="text-[10px] text-slate-300">Emergencies</span>
               </div>
               <div className="w-px bg-white/10 h-10 self-center"></div>
               <div>
                 <span className="text-xl font-black text-fifa-emerald block">Active</span>
-                <span className="text-[10px] text-slate-400">Gemini</span>
+                <span className="text-[10px] text-slate-300">Gemini</span>
               </div>
             </div>
           </GlassCard>
@@ -110,7 +110,7 @@ export default function Home() {
           <h3 className="text-lg font-bold font-display text-slate-800 dark:text-white flex items-center gap-2 justify-center md:justify-start">
             👋 Choose Your Dashboard View
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 font-semibold">
             Toggle between roles to see how StadiumGenie coordinates data across fans, organizers, volunteers, and staff in real-time.
           </p>
         </div>
@@ -124,6 +124,9 @@ export default function Home() {
                 key={p.id}
                 onClick={() => setRole(p.id)}
                 hoverEffect={true}
+                ariaLabel={`Select ${p.title} dashboard view`}
+                aria-pressed={isActive}
+                role="button"
                 className={`flex flex-col justify-between h-[210px] border-2 transition-all p-5 ${
                   isActive 
                     ? 'border-fifa-emerald shadow-fifa-emerald/10 scale-102 bg-white dark:bg-slate-900/60' 
@@ -133,19 +136,19 @@ export default function Home() {
                 <div className="space-y-2">
                   <div className="flex justify-between items-start">
                     <div className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5 ${p.color}`}>
-                      <Icon className="w-5 h-5" />
+                      <Icon className="w-5 h-5" aria-hidden="true" />
                     </div>
                     {isActive && (
-                      <span className="text-[9px] font-extrabold uppercase tracking-widest text-fifa-emerald bg-emerald-500/10 px-2 py-0.5 rounded flex items-center gap-1">
-                        <Sparkles className="w-2.5 h-2.5 fill-fifa-emerald" /> Active
+                      <span className="text-[9px] font-extrabold uppercase tracking-widest text-emerald-800 dark:text-fifa-emerald bg-emerald-500/10 px-2 py-0.5 rounded flex items-center gap-1">
+                        <Sparkles className="w-2.5 h-2.5 fill-fifa-emerald" aria-hidden="true" /> Active
                       </span>
                     )}
                   </div>
                   <div>
                     <h4 className="font-bold text-sm dark:text-white text-slate-800">{p.title}</h4>
-                    <span className="text-[10px] font-semibold text-slate-400 block mt-0.5">{p.tagline}</span>
+                    <span className="text-[10px] font-semibold text-slate-600 dark:text-slate-300 block mt-0.5">{p.tagline}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal line-clamp-3">
+                  <p className="text-[11px] text-slate-700 dark:text-slate-350 leading-normal line-clamp-3 font-semibold">
                     {p.desc}
                   </p>
                 </div>

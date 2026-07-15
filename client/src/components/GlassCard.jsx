@@ -6,10 +6,12 @@ export default function GlassCard({
   className = '', 
   hoverEffect = true,
   onClick = null,
-  role = 'region',
-  ariaLabel = ''
+  role = null,
+  ariaLabel = '',
+  ...props
 }) {
   const CardComponent = onClick ? motion.button : motion.div;
+  const computedRole = role || (onClick ? 'button' : 'region');
   
   const motionProps = onClick && hoverEffect ? {
     whileHover: { scale: 1.02, y: -2 },
@@ -19,9 +21,10 @@ export default function GlassCard({
 
   return (
     <CardComponent
-      role={role}
-      aria-label={ariaLabel}
+      role={computedRole}
+      aria-label={ariaLabel || undefined}
       onClick={onClick}
+      type={onClick ? 'button' : undefined}
       className={`
         glass-panel-dark 
         dark:bg-slate-950/40 
@@ -36,10 +39,11 @@ export default function GlassCard({
         dark:border-white/10 
         transition-colors 
         duration-300
-        ${onClick ? 'cursor-pointer focus:outline-none text-left w-full' : ''}
+        ${onClick ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold text-left w-full' : ''}
         ${className}
       `}
       {...motionProps}
+      {...props}
     >
       {children}
     </CardComponent>

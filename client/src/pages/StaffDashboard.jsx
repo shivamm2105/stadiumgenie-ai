@@ -97,7 +97,7 @@ export default function StaffDashboard() {
           <h2 className="text-base font-bold mb-3 flex items-center gap-1.5 dark:text-white">
             <PlusCircle className="text-fifa-emerald w-5 h-5" /> Log Maintenance & Cleaning Issue
           </h2>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-600 dark:text-slate-300 mb-4 font-semibold">
             Type details of the malfunction or cleaning spill, then let Gemini analyze the security threat level.
           </p>
 
@@ -110,8 +110,10 @@ export default function StaffDashboard() {
                 value={ticketDetails}
                 onChange={(e) => setTicketDetails(e.target.value)}
                 placeholder="Details: 'Turnstile A3 ticketing scanner is frozen. Rejecting tickets.' or 'Water leak Restroom Block B...'"
+                aria-label="Malfunction Details"
+                title="Malfunction Details"
                 required
-                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-xs focus:ring-2 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl p-3 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white font-semibold"
               />
             </div>
 
@@ -123,21 +125,25 @@ export default function StaffDashboard() {
                 value={ticketLocation}
                 onChange={(e) => setTicketLocation(e.target.value)}
                 placeholder="Specific Location (e.g. Gate A Turnstiles, Concourse Section 102)"
+                aria-label="Specific Location"
+                title="Specific Location"
                 required
-                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white font-semibold"
               />
             </div>
 
             <button
               type="submit"
               disabled={aiLoading || !ticketDetails.trim() || !ticketLocation.trim()}
-              className="bg-fifa-blue hover:bg-blue-600 text-white font-bold text-xs py-2 px-5 rounded-xl flex items-center gap-1.5 transition-all shadow cursor-pointer disabled:opacity-50"
+              aria-label="Ask Gemini Priority Analysis"
+              title="Ask Gemini Priority Analysis"
+              className="bg-fifa-blue hover:bg-blue-600 text-white font-bold text-xs py-2 px-5 rounded-xl flex items-center gap-1.5 transition-all shadow cursor-pointer disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
             >
               {aiLoading ? (
                 <span>AI Categorizing...</span>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5 text-fifa-gold fill-fifa-gold" /> Ask Gemini Priority Analysis
+                  <Sparkles className="w-3.5 h-3.5 text-amber-900 dark:text-fifa-gold fill-fifa-gold" aria-hidden="true" /> Ask Gemini Priority Analysis
                 </>
               )}
             </button>
@@ -164,7 +170,9 @@ export default function StaffDashboard() {
                   <button
                     type="button"
                     onClick={() => handleGetAIEvaluation(null)}
-                    className="bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px]"
+                    aria-label="Retry AI prioritization"
+                    title="Retry AI prioritization"
+                    className="bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
                   >
                     🔄 Retry Evaluation
                   </button>
@@ -173,17 +181,17 @@ export default function StaffDashboard() {
 
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div>
-                  <span className="text-[9px] text-slate-400 block uppercase">Assigned Team</span>
-                  <span className="font-bold dark:text-white">{aiPrioritization.allocatedTeam}</span>
+                  <span className="text-[9px] text-slate-300 block uppercase">Assigned Team</span>
+                  <span className="font-bold text-white">{aiPrioritization.allocatedTeam}</span>
                 </div>
                 <div>
-                  <span className="text-[9px] text-slate-400 block uppercase">Resolution ETA</span>
-                  <span className="font-bold dark:text-white">{aiPrioritization.etaMinutes} mins</span>
+                  <span className="text-[9px] text-slate-300 block uppercase">Resolution ETA</span>
+                  <span className="font-bold text-white">{aiPrioritization.etaMinutes} mins</span>
                 </div>
               </div>
 
               <div className="text-xs">
-                <span className="text-[9px] text-slate-400 block uppercase">AI Justification</span>
+                <span className="text-[9px] text-slate-300 block uppercase">AI Justification</span>
                 <p className="text-slate-300 leading-relaxed font-semibold">{aiPrioritization.justification}</p>
               </div>
 
@@ -207,7 +215,7 @@ export default function StaffDashboard() {
           </h2>
           <div className="space-y-3 max-h-56 overflow-y-auto scrollbar-thin">
             {maintenanceTickets.length === 0 ? (
-              <div className="text-center py-6 text-xs text-slate-400">No active work orders. Everything runs fine.</div>
+              <div className="text-center py-6 text-xs text-slate-600 dark:text-slate-300 font-semibold">No active work orders. Everything runs fine.</div>
             ) : (
               maintenanceTickets.map(ticket => (
                 <div key={ticket.id} className="bg-slate-100 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 p-3 rounded-xl text-xs">
@@ -215,23 +223,23 @@ export default function StaffDashboard() {
                     <span className="font-extrabold dark:text-white">{ticket.id} — {ticket.location}</span>
                     <span className={`px-2 py-0.5 rounded font-extrabold text-[9px] uppercase ${
                       ticket.priority === 'Critical' || ticket.priority === 'High'
-                        ? 'bg-red-500/10 text-fifa-red'
-                        : 'bg-yellow-500/10 text-fifa-gold'
+                        ? 'bg-red-500/10 text-red-700 dark:text-fifa-red'
+                        : 'bg-yellow-500/10 text-amber-900 dark:text-fifa-gold'
                     }`}>
                       {ticket.priority}
                     </span>
                   </div>
-                  <p className="text-slate-400 leading-normal mb-2">{ticket.details}</p>
+                  <p className="text-slate-600 dark:text-slate-300 leading-normal mb-2 font-semibold">{ticket.details}</p>
                   
-                  <div className="flex justify-between items-center text-[10px] text-slate-500 font-medium pt-2 border-t border-slate-200/50 dark:border-white/5">
+                  <div className="flex justify-between items-center text-[10px] text-slate-755 font-medium pt-2 border-t border-slate-200/50 dark:border-white/5">
                     <div className="flex items-center gap-1">
-                      <Wrench className="w-3 h-3 text-fifa-blue" />
-                      <span>Team: {ticket.allocatedTeam}</span>
+                      <Wrench className="w-3 h-3 text-fifa-blue dark:text-blue-400" aria-hidden="true" />
+                      <span className="text-slate-700 dark:text-slate-300 font-semibold">Team: {ticket.allocatedTeam}</span>
                     </div>
                     
                     <div className="flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      <span>ETA: {ticket.etaMinutes} mins</span>
+                      <Clock className="w-3 h-3" aria-hidden="true" />
+                      <span className="text-slate-700 dark:text-slate-300 font-semibold">ETA: {ticket.etaMinutes} mins</span>
                     </div>
                   </div>
                 </div>
@@ -248,7 +256,7 @@ export default function StaffDashboard() {
         {/* Hardware & turnstiles signals */}
         <GlassCard className="p-4">
           <h2 className="text-sm font-extrabold mb-3 flex items-center gap-1.5 dark:text-white">
-            <Cpu className="text-fifa-blue w-4 h-4" /> Hardware Signals Telemetry
+            <Cpu className="text-fifa-blue dark:text-blue-400 w-4 h-4" aria-hidden="true" /> Hardware Signals Telemetry
           </h2>
           
           <div className="space-y-2.5">
@@ -256,18 +264,18 @@ export default function StaffDashboard() {
               <div key={i} className="flex justify-between items-center text-xs p-2.5 bg-slate-100 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 rounded-xl">
                 <div className="flex flex-col">
                   <span className="font-bold dark:text-white">{eq.name}</span>
-                  <span className="text-[10px] text-slate-400">Class: {eq.category}</span>
+                  <span className="text-[10px] text-slate-655 font-semibold">Class: {eq.category}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded font-extrabold text-[9px] uppercase ${
-                    eq.status === 'Online' ? 'bg-emerald-500/10 text-fifa-emerald' : 'bg-red-500/10 text-fifa-red'
+                    eq.status === 'Online' ? 'bg-emerald-500/10 text-emerald-800 dark:text-fifa-emerald' : 'bg-red-500/10 text-red-700 dark:text-fifa-red'
                   }`}>
                     {eq.status}
                   </span>
                   
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                    <Wifi className={`w-3.5 h-3.5 ${eq.status === 'Online' ? 'text-fifa-emerald' : 'text-fifa-red'}`} />
+                  <span className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold flex items-center gap-1">
+                    <Wifi className={`w-3.5 h-3.5 ${eq.status === 'Online' ? 'text-emerald-800 dark:text-fifa-emerald' : 'text-red-700 dark:text-fifa-red'}`} aria-hidden="true" />
                     {eq.signal}
                   </span>
                 </div>
@@ -281,21 +289,21 @@ export default function StaffDashboard() {
           <h2 className="text-sm font-extrabold mb-3 flex items-center gap-1.5 dark:text-white">
             🧹 Priority Cleaning Triage
           </h2>
-          <div className="space-y-2 text-xs text-slate-400">
+          <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300 font-semibold">
             <div className="bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200/50 dark:border-white/10 flex justify-between items-center">
               <div>
                 <span className="font-bold dark:text-white text-xs block">Restroom Block B Spill</span>
-                <span className="text-[10px]">Level 2 Concourse - Reported 15m ago</span>
+                <span className="text-[10px] text-slate-600 dark:text-slate-400">Level 2 Concourse - Reported 15m ago</span>
               </div>
-              <span className="bg-red-500/10 text-fifa-red px-2 py-0.5 rounded text-[9px] font-bold">HIGH RISK</span>
+              <span className="bg-red-500/10 text-red-700 dark:text-fifa-red px-2 py-0.5 rounded text-[9px] font-bold">HIGH RISK</span>
             </div>
             
             <div className="bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200/50 dark:border-white/10 flex justify-between items-center">
               <div>
                 <span className="font-bold dark:text-white text-xs block">Concourse Section 102 Trash bin overflow</span>
-                <span className="text-[10px]">Gate C Entrance - Reported 30m ago</span>
+                <span className="text-[10px] text-slate-600 dark:text-slate-400">Gate C Entrance - Reported 30m ago</span>
               </div>
-              <span className="bg-yellow-500/10 text-fifa-gold px-2 py-0.5 rounded text-[9px] font-bold">MED RISK</span>
+              <span className="bg-yellow-500/10 text-amber-900 dark:text-fifa-gold px-2 py-0.5 rounded text-[9px] font-bold">MED RISK</span>
             </div>
           </div>
         </GlassCard>

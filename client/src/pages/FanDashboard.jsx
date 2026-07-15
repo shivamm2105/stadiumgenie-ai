@@ -139,9 +139,9 @@ export default function FanDashboard() {
       <div className="lg:col-span-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-            <Compass className="text-fifa-emerald w-7 h-7" /> Fan Companion Portal
+            <Compass className="text-emerald-800 dark:text-fifa-emerald w-7 h-7" aria-hidden="true" /> Fan Companion Portal
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-slate-700 dark:text-slate-300">
             Real-time guidance, queue predictions, and interactive Gemini assistants.
           </p>
         </div>
@@ -151,13 +151,15 @@ export default function FanDashboard() {
           onClick={triggerSOS}
           onMouseEnter={(e) => handleSpeakHover(e, "Trigger medical emergency SOS report")}
           disabled={sosStatus}
+          aria-label={sosStatus ? 'Emergency Staff Notified' : 'SOS Emergency Help'}
+          title={sosStatus ? 'Emergency Staff Notified' : 'SOS Emergency Help'}
           className={`px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all focus:ring-4 focus:ring-red-400 ${
             sosStatus 
               ? 'bg-emerald-600 text-white cursor-default' 
               : 'bg-fifa-red hover:bg-red-700 text-white cursor-pointer hover:scale-105 active:scale-95'
           }`}
         >
-          <ShieldAlert className="w-5 h-5 animate-pulse" />
+          <ShieldAlert className="w-5 h-5 animate-pulse" aria-hidden="true" />
           {sosStatus ? 'Emergency Staff Notified' : 'SOS Emergency Help'}
         </button>
       </div>
@@ -178,7 +180,9 @@ export default function FanDashboard() {
             </div>
             <button 
               onClick={() => setSosStatus(false)}
-              className="text-xs font-bold text-slate-400 hover:text-white bg-slate-800/80 px-3 py-1.5 rounded-lg"
+              aria-label="Clear SOS status"
+              title="Clear SOS status"
+              className="text-xs font-bold text-slate-200 hover:text-white bg-slate-800/80 px-3 py-1.5 rounded-lg focus:ring-2 focus:ring-fifa-gold"
             >
               Clear SOS
             </button>
@@ -192,9 +196,9 @@ export default function FanDashboard() {
         {/* Interactive Pathfinder Visualizer */}
         <GlassCard className="overflow-hidden">
           <h2 className="text-base font-bold mb-4 flex items-center gap-2 dark:text-white">
-            <Navigation className="text-fifa-blue w-5 h-5" /> Interactive Stadium Navigator
+            <Navigation className="text-fifa-blue dark:text-blue-400 w-5 h-5" aria-hidden="true" /> Interactive Stadium Navigator
           </h2>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-600 dark:text-slate-300 mb-4">
             Select a target below to highlight the safest, most accessible paths from your seat:
           </p>
 
@@ -208,7 +212,10 @@ export default function FanDashboard() {
               <button
                 key={target.id}
                 onClick={() => setNavTarget(navTarget === target.id ? null : target.id)}
-                className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all text-center ${
+                aria-pressed={navTarget === target.id}
+                aria-label={`Highlight path to ${target.label}`}
+                title={`Highlight path to ${target.label}`}
+                className={`py-2 px-3 text-xs font-semibold rounded-xl border transition-all text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold ${
                   navTarget === target.id
                     ? 'bg-fifa-blue text-white border-fifa-blue'
                     : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 dark:text-slate-200 text-slate-700'
@@ -299,8 +306,8 @@ export default function FanDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <GlassCard className="p-4 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Entrance Queue Loads</span>
-              <Clock className="w-4 h-4 text-fifa-emerald" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Entrance Queue Loads</span>
+              <Clock className="w-4 h-4 text-emerald-800 dark:text-fifa-emerald" aria-hidden="true" />
             </div>
             <div className="space-y-2 mt-2">
               {gates.map(gate => (
@@ -312,7 +319,7 @@ export default function FanDashboard() {
                       style={{ width: `${gate.occupancy}%` }} 
                     />
                   </div>
-                  <span className={`font-bold ${gate.occupancy > 80 ? 'text-fifa-red' : 'dark:text-white'}`}>{gate.occupancy}%</span>
+                  <span className={`font-bold ${gate.occupancy > 80 ? 'text-red-700 dark:text-fifa-red' : 'text-slate-800 dark:text-white'}`}>{gate.occupancy}%</span>
                 </div>
               ))}
             </div>
@@ -320,8 +327,8 @@ export default function FanDashboard() {
 
           <GlassCard className="p-4 flex flex-col justify-between">
             <div className="flex justify-between items-start mb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Food Wait Estimates</span>
-              <Utensils className="w-4 h-4 text-fifa-gold" />
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">Food Wait Estimates</span>
+              <Utensils className="w-4 h-4 text-amber-900 dark:text-fifa-gold" aria-hidden="true" />
             </div>
             <div className="space-y-2 mt-2">
               {foodCourts.slice(0, 3).map(court => (
@@ -329,10 +336,10 @@ export default function FanDashboard() {
                   <span className="font-semibold dark:text-slate-300 text-slate-700 truncate max-w-[120px]">{court.name}</span>
                   <span className={`px-2 py-0.5 rounded font-bold ${
                     court.queueMinutes > 20 
-                      ? 'bg-red-500/10 text-fifa-red' 
+                      ? 'bg-red-500/10 text-red-700 dark:text-fifa-red' 
                       : court.queueMinutes > 10 
-                      ? 'bg-yellow-500/10 text-fifa-gold' 
-                      : 'bg-emerald-500/10 text-fifa-emerald'
+                      ? 'bg-yellow-500/10 text-amber-900 dark:text-fifa-gold' 
+                      : 'bg-emerald-500/10 text-emerald-800 dark:text-fifa-emerald'
                   }`}>
                     {court.queueMinutes} mins wait
                   </span>
@@ -351,12 +358,12 @@ export default function FanDashboard() {
         <GlassCard className="h-[380px] flex flex-col p-4 justify-between border-fifa-emerald/20">
           <div className="flex justify-between items-center border-b border-slate-200 dark:border-white/10 pb-3 mb-2">
             <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-fifa-emerald animate-ping" />
+              <div className="w-2.5 h-2.5 rounded-full bg-fifa-emerald animate-ping" aria-hidden="true" />
               <span className="font-bold text-sm dark:text-white flex items-center gap-1.5">
-                AI Match Assistant <Sparkles className="w-4 h-4 text-fifa-gold fill-fifa-gold" />
+                AI Match Assistant <Sparkles className="w-4 h-4 text-amber-900 dark:text-fifa-gold fill-fifa-gold" aria-hidden="true" />
               </span>
             </div>
-            <span className="text-[10px] text-slate-400">Powered by Gemini</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold">Powered by Gemini</span>
           </div>
 
           {/* Messages Viewport */}
@@ -366,8 +373,8 @@ export default function FanDashboard() {
                 <div 
                   className={`max-w-[85%] rounded-2xl p-3 leading-relaxed ${
                     msg.role === 'assistant' 
-                      ? 'bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-slate-200 mr-auto rounded-tl-none' 
-                      : 'bg-fifa-blue text-white ml-auto rounded-tr-none'
+                      ? 'bg-slate-100 dark:bg-white/5 text-slate-800 dark:text-slate-200 mr-auto rounded-tl-none font-semibold' 
+                      : 'bg-fifa-blue text-white ml-auto rounded-tr-none font-semibold'
                   }`}
                 >
                   {msg.text}
@@ -384,33 +391,38 @@ export default function FanDashboard() {
               </div>
             ))}
             {chatLoading && (
-              <div className="bg-slate-100 dark:bg-white/5 text-slate-400 p-3 rounded-2xl rounded-tl-none mr-auto max-w-[85%] flex items-center gap-2">
-                <div className="flex gap-1">
+              <div className="bg-slate-100 dark:bg-white/5 text-slate-500 p-3 rounded-2xl rounded-tl-none mr-auto max-w-[85%] flex items-center gap-2">
+                <div className="flex gap-1" aria-hidden="true">
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce"></span>
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.2s]"></span>
                   <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-bounce [animation-delay:0.4s]"></span>
                 </div>
-                <span>Gemini is reading...</span>
+                <span className="font-semibold">Gemini is reading...</span>
               </div>
             )}
           </div>
 
           {/* Input Form */}
           <form onSubmit={handleSendMessage} className="flex gap-2 border-t border-slate-200 dark:border-white/10 pt-3">
+            <label htmlFor="chat-input" className="sr-only">Ask the AI Match Assistant a question</label>
             <input
+              id="chat-input"
               type="text"
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
               placeholder="Ask: 'Where is Gate B?' or 'menus'..."
-              className="flex-grow bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+              aria-label="Message the AI Match Assistant"
+              title="Message the AI Match Assistant"
+              className="flex-grow bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-emerald focus:outline-none dark:text-white font-semibold"
             />
             <button
               type="submit"
               aria-label="Send query"
+              title="Send query"
               disabled={chatLoading || !chatInput.trim()}
-              className="bg-fifa-emerald text-white p-2.5 rounded-xl hover:bg-emerald-600 transition-colors disabled:opacity-50"
+              className="bg-fifa-emerald text-white p-2.5 rounded-xl hover:bg-emerald-600 transition-colors disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
             >
-              <Send className="w-4 h-4" />
+              <Send className="w-4 h-4" aria-hidden="true" />
             </button>
           </form>
         </GlassCard>
@@ -418,9 +430,9 @@ export default function FanDashboard() {
         {/* AI Food Recommendations */}
         <GlassCard className="p-5 border-fifa-blue/20">
           <h2 className="text-sm font-extrabold mb-3 flex items-center gap-1.5 dark:text-white">
-            <Utensils className="text-fifa-gold w-4 h-4" /> AI Concession Planner
+            <Utensils className="text-amber-900 dark:text-fifa-gold w-4 h-4" aria-hidden="true" /> AI Concession Planner
           </h2>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-600 dark:text-slate-300 mb-4 font-semibold">
             Select your preferences, and Gemini will find a dining match with short queue estimates.
           </p>
 
@@ -429,11 +441,15 @@ export default function FanDashboard() {
               {['None', 'Vegan', 'Gluten-Free', 'Carnivore'].map(pref => (
                 <button
                   key={pref}
+                  type="button"
                   onClick={() => setDietary(pref)}
-                  className={`flex-grow py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  aria-pressed={dietary === pref}
+                  aria-label={`Select dietary preference: ${pref}`}
+                  title={`Select dietary preference: ${pref}`}
+                  className={`flex-grow py-1.5 text-xs font-semibold rounded-lg border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold ${
                     dietary === pref
                       ? 'bg-fifa-emerald border-fifa-emerald text-white'
-                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                   }`}
                 >
                   {pref}
@@ -444,23 +460,23 @@ export default function FanDashboard() {
             <button
               onClick={handleGetFoodRec}
               disabled={foodLoading}
-              className="w-full bg-fifa-blue hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow"
+              className="w-full bg-fifa-blue hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
             >
               {foodLoading ? (
                 <span>Generating suggestion...</span>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5 text-fifa-gold" /> Plan Dinner
+                  <Sparkles className="w-3.5 h-3.5 text-amber-900 dark:text-fifa-gold" aria-hidden="true" /> Plan Dinner
                 </>
               )}
             </button>
 
             {foodRec && (
               <div className="mt-2 bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200/50 dark:border-white/10">
-                <span className="text-[10px] text-fifa-emerald font-bold uppercase tracking-wider block mb-1">
+                <span className="text-[10px] text-emerald-800 dark:text-fifa-emerald font-bold uppercase tracking-wider block mb-1">
                   {foodError ? 'System Warning' : 'AI Recommendation'}
                 </span>
-                <p className={`text-xs leading-relaxed ${foodError ? 'text-fifa-red' : 'text-slate-700 dark:text-slate-300'}`}>{foodRec}</p>
+                <p className={`text-xs leading-relaxed font-semibold ${foodError ? 'text-red-700 dark:text-fifa-red font-bold' : 'text-slate-800 dark:text-slate-200'}`}>{foodRec}</p>
                 {foodError && (
                   <button
                     type="button"
@@ -478,9 +494,9 @@ export default function FanDashboard() {
         {/* AI Transit & Eco-Advisor */}
         <GlassCard className="p-5 border-fifa-emerald/20">
           <h2 className="text-sm font-extrabold mb-3 flex items-center gap-1.5 dark:text-white">
-            <Sparkles className="text-fifa-gold w-4 h-4 animate-pulse" /> AI Transit & Eco-Advisor
+            <Sparkles className="text-amber-900 dark:text-fifa-gold w-4 h-4 animate-pulse" aria-hidden="true" /> AI Transit & Eco-Advisor
           </h2>
-          <p className="text-xs text-slate-400 mb-4">
+          <p className="text-xs text-slate-600 dark:text-slate-300 mb-4 font-semibold">
             Get travel planning with eco-friendly metrics to lower surrounding concourse traffic levels.
           </p>
 
@@ -493,8 +509,10 @@ export default function FanDashboard() {
                 value={transitDest}
                 onChange={(e) => setTransitDest(e.target.value)}
                 placeholder="E.g., Airport, Downtown Monterrey, North Hotel Zone"
+                aria-label="Enter transit destination address"
+                title="Enter transit destination address"
                 required
-                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-emerald focus:outline-none dark:text-white font-semibold"
               />
             </div>
 
@@ -504,10 +522,13 @@ export default function FanDashboard() {
                   key={pref}
                   type="button"
                   onClick={() => setTransitPref(pref)}
-                  className={`flex-grow py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+                  aria-pressed={transitPref === pref}
+                  aria-label={`Select transit: ${pref}`}
+                  title={`Select transit: ${pref}`}
+                  className={`flex-grow py-1.5 text-xs font-semibold rounded-lg border transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold ${
                     transitPref === pref
                       ? 'bg-fifa-emerald border-fifa-emerald text-white'
-                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
+                      : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10'
                   }`}
                 >
                   {pref}
@@ -518,23 +539,23 @@ export default function FanDashboard() {
             <button
               type="submit"
               disabled={transitLoading || !transitDest.trim()}
-              className="w-full bg-fifa-blue hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow disabled:opacity-50"
+              className="w-full bg-fifa-blue hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
             >
               {transitLoading ? (
                 <span>Planning route...</span>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5 text-fifa-gold fill-fifa-gold" /> Plan Transit
+                  <Sparkles className="w-3.5 h-3.5 text-amber-900 dark:text-fifa-gold fill-fifa-gold" aria-hidden="true" /> Plan Transit
                 </>
               )}
             </button>
 
             {transitRec && (
               <div className="mt-2 bg-slate-100 dark:bg-white/5 p-3 rounded-xl border border-slate-200/50 dark:border-white/10">
-                <span className="text-[10px] text-fifa-emerald font-bold uppercase tracking-wider block mb-1">
+                <span className="text-[10px] text-emerald-800 dark:text-fifa-emerald font-bold uppercase tracking-wider block mb-1">
                   {transitError ? 'System Warning' : 'AI Recommendation & Eco-Tip'}
                 </span>
-                <p className={`text-xs leading-relaxed ${transitError ? 'text-fifa-red' : 'text-slate-700 dark:text-slate-300'}`}>{transitRec}</p>
+                <p className={`text-xs leading-relaxed font-semibold ${transitError ? 'text-red-700 dark:text-fifa-red font-bold' : 'text-slate-800 dark:text-slate-200'}`}>{transitRec}</p>
                 {transitError && (
                   <button
                     type="button"

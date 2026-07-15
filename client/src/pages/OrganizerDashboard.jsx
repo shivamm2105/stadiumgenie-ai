@@ -97,66 +97,67 @@ export default function OrganizerDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl font-display font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
-            <Activity className="text-fifa-blue w-7 h-7" /> Security Operations Command Center
+            <Activity className="text-fifa-blue dark:text-blue-400 w-7 h-7" aria-hidden="true" /> Security Operations Command Center
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+          <p className="text-sm text-slate-700 dark:text-slate-300">
             Real-time telemetry feeds, incident analytics, and AI Emergency Decision Support.
           </p>
         </div>
         <button
           onClick={refreshState}
           aria-label="Refresh telemetry feeds"
-          className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/15 dark:text-white px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors font-bold"
+          title="Refresh telemetry feeds"
+          className="bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/15 dark:text-white px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-colors font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
         >
-          <RefreshCw className="w-4 h-4" /> Refresh Telemetry
+          <RefreshCw className="w-4 h-4" aria-hidden="true" /> Refresh Telemetry
         </button>
       </div>
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-fifa-blue/10 flex items-center justify-center text-fifa-blue font-bold text-lg">
+          <div className="w-10 h-10 rounded-xl bg-fifa-blue/10 flex items-center justify-center text-fifa-blue dark:text-blue-400 font-bold text-lg" aria-hidden="true">
             👥
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Attendance</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider block">Attendance</span>
             <span className="text-lg font-black dark:text-white">78,500</span>
-            <span className="text-[10px] text-fifa-emerald block">98% Capacity</span>
+            <span className="text-[10px] text-emerald-800 dark:text-fifa-emerald block font-semibold">98% Capacity</span>
           </div>
         </GlassCard>
 
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-fifa-red/10 flex items-center justify-center text-fifa-red font-bold text-lg">
+          <div className="w-10 h-10 rounded-xl bg-fifa-red/10 flex items-center justify-center text-fifa-red dark:text-red-400 font-bold text-lg" aria-hidden="true">
             ⚠️
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Open Incidents</span>
-            <span className={`text-lg font-black ${activeIncidents.length > 0 ? 'text-fifa-red animate-pulse' : 'dark:text-white'}`}>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider block">Open Incidents</span>
+            <span className={`text-lg font-black ${activeIncidents.length > 0 ? 'text-red-700 dark:text-fifa-red animate-pulse' : 'dark:text-white'}`}>
               {activeIncidents.length}
             </span>
-            <span className="text-[10px] text-slate-400 block">Pending triage</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 block font-semibold">Pending triage</span>
           </div>
         </GlassCard>
 
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-fifa-gold/10 flex items-center justify-center text-fifa-gold font-bold text-lg">
+          <div className="w-10 h-10 rounded-xl bg-fifa-gold/10 flex items-center justify-center text-fifa-gold dark:text-amber-400 font-bold text-lg" aria-hidden="true">
             🚗
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Parking Load</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider block">Parking Load</span>
             <span className="text-lg font-black dark:text-white">93% Avg</span>
-            <span className="text-[10px] text-fifa-red block">Lot C is full</span>
+            <span className="text-[10px] text-red-700 dark:text-fifa-red block font-semibold">Lot C is full</span>
           </div>
         </GlassCard>
 
         <GlassCard className="p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-fifa-emerald/10 flex items-center justify-center text-fifa-emerald font-bold text-lg">
+          <div className="w-10 h-10 rounded-xl bg-fifa-emerald/10 flex items-center justify-center text-fifa-emerald dark:text-emerald-400 font-bold text-lg" aria-hidden="true">
             ⌚
           </div>
           <div>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Avg Queue wait</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 font-bold uppercase tracking-wider block">Avg Queue wait</span>
             <span className="text-lg font-black dark:text-white">12.5 Min</span>
-            <span className="text-[10px] text-fifa-emerald block">Gates flowing green</span>
+            <span className="text-[10px] text-emerald-800 dark:text-fifa-emerald block font-semibold">Gates flowing green</span>
           </div>
         </GlassCard>
       </div>
@@ -238,27 +239,33 @@ export default function OrganizerDashboard() {
           {/* Emergency Ticker Broadcast */}
           <GlassCard className="p-4 border-fifa-red/20 bg-red-500/5">
             <h2 className="text-sm font-extrabold mb-2.5 flex items-center gap-1.5 dark:text-white">
-              <ShieldAlert className="text-fifa-red w-4 h-4" /> Global Emergency Broadcaster
+              <ShieldAlert className="text-red-700 dark:text-fifa-red w-4 h-4" aria-hidden="true" /> Global Emergency Broadcaster
             </h2>
-            <p className="text-xs text-slate-400 mb-3">
+            <p className="text-xs text-slate-600 dark:text-slate-300 mb-3 font-semibold">
               Broadcast high-priority instructions to all visitor and volunteer devices instantly.
             </p>
 
             <form onSubmit={handleBroadcast} className="flex gap-2">
+              <label htmlFor="broadcast-input" className="sr-only">Enter emergency warning broadcast text</label>
               <input
+                id="broadcast-input"
                 type="text"
                 value={broadcastText}
                 onChange={(e) => setBroadcastText(e.target.value)}
                 placeholder={matchInfo.emergencyAlert ? 'Clear alert by broadcasting blank...' : 'E.g., Severe lightning storm. Seek shelter.'}
-                className="flex-grow bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none dark:text-white"
+                aria-label="Broadcast alert text"
+                title="Broadcast alert text"
+                className="flex-grow bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-fifa-gold dark:text-white font-semibold"
               />
               <button
                 type="submit"
                 disabled={broadcastLoading}
-                className={`text-white text-xs font-bold px-4 py-2 rounded-xl transition-all ${
+                aria-label={matchInfo.emergencyAlert ? 'Clear broadcast alert' : 'Send broadcast alert'}
+                title={matchInfo.emergencyAlert ? 'Clear broadcast alert' : 'Send broadcast alert'}
+                className={`text-white text-xs font-bold px-4 py-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold cursor-pointer ${
                   matchInfo.emergencyAlert 
                     ? 'bg-slate-700 hover:bg-slate-600' 
-                    : 'bg-fifa-red hover:bg-red-700'
+                    : 'bg-red-700 hover:bg-red-800'
                 }`}
               >
                 {matchInfo.emergencyAlert ? 'Clear' : 'Broadcast'}
@@ -273,8 +280,8 @@ export default function OrganizerDashboard() {
             </h2>
             <div className="space-y-3 max-h-56 overflow-y-auto scrollbar-thin">
               {activeIncidents.length === 0 ? (
-                <div className="text-center py-6 text-xs text-slate-400">
-                  <Check className="w-8 h-8 text-fifa-emerald mx-auto mb-1 opacity-50" />
+                <div className="text-center py-6 text-xs text-slate-600 dark:text-slate-300 font-semibold">
+                  <Check className="w-8 h-8 text-emerald-800 dark:text-fifa-emerald mx-auto mb-1 opacity-50" aria-hidden="true" />
                   All reports triaged. Secure stadium.
                 </div>
               ) : (
@@ -282,7 +289,16 @@ export default function OrganizerDashboard() {
                   <div 
                     key={inc.id}
                     onClick={() => handleAnalyzeIncident(inc)}
-                    className={`p-3 rounded-xl border text-xs cursor-pointer transition-all ${
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Analyze incident: ${inc.category} at ${inc.location}`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleAnalyzeIncident(inc);
+                      }
+                    }}
+                    className={`p-3 rounded-xl border text-xs cursor-pointer transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold ${
                       selectedIncId === inc.id
                         ? 'bg-fifa-blue/10 border-fifa-blue'
                         : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10'
@@ -291,15 +307,15 @@ export default function OrganizerDashboard() {
                     <div className="flex justify-between items-center mb-1">
                       <span className={`px-2 py-0.5 rounded font-extrabold text-[9px] uppercase ${
                         inc.priority === 'High' 
-                          ? 'bg-red-500/10 text-fifa-red' 
-                          : 'bg-yellow-500/10 text-fifa-gold'
+                          ? 'bg-red-500/10 text-red-700 dark:text-fifa-red' 
+                          : 'bg-yellow-500/10 text-amber-900 dark:text-fifa-gold'
                       }`}>
                         {inc.priority} Priority
                       </span>
-                      <span className="text-[10px] text-slate-400">{inc.timestamp}</span>
+                      <span className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold">{inc.timestamp}</span>
                     </div>
                     <div className="font-bold dark:text-white mb-1">{inc.category} — {inc.location}</div>
-                    <p className="text-slate-400 leading-normal line-clamp-2">{inc.description}</p>
+                    <p className="text-slate-600 dark:text-slate-300 leading-normal line-clamp-2 font-semibold">{inc.description}</p>
                     
                     <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-slate-200/50 dark:border-white/5">
                       <button
@@ -307,9 +323,11 @@ export default function OrganizerDashboard() {
                           e.stopPropagation();
                           handleResolveIncident(inc.id);
                         }}
-                        className="flex items-center gap-1 text-[10px] bg-fifa-emerald text-white px-2.5 py-1 rounded hover:bg-emerald-600 font-bold"
+                        aria-label={`Resolve incident: ${inc.id}`}
+                        title={`Resolve incident: ${inc.id}`}
+                        className="flex items-center gap-1 text-[10px] bg-fifa-emerald text-white px-2.5 py-1 rounded hover:bg-emerald-600 font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
                       >
-                        <Check className="w-3 h-3" /> Resolve
+                        <Check className="w-3 h-3" aria-hidden="true" /> Resolve
                       </button>
                     </div>
                   </div>
@@ -322,15 +340,15 @@ export default function OrganizerDashboard() {
           {selectedIncId && (
             <GlassCard className="p-4 border-fifa-blue/30 bg-slate-900/50">
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-bold dark:text-white flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-fifa-gold fill-fifa-gold" /> AI Emergency Support Checklists
+                <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-fifa-gold fill-fifa-gold" aria-hidden="true" /> AI Emergency Support Checklists
                 </span>
-                <span className="text-[9px] text-slate-400">Incident: {selectedIncId}</span>
+                <span className="text-[9px] text-slate-300">Incident: {selectedIncId}</span>
               </div>
 
               {analysisLoading ? (
-                <div className="text-xs text-slate-400 py-4 flex items-center justify-center gap-2">
-                  <div className="w-3 h-3 border-2 border-fifa-blue border-t-transparent rounded-full animate-spin"></div>
+                <div className="text-xs text-slate-300 py-4 flex items-center justify-center gap-2">
+                  <div className="w-3 h-3 border-2 border-fifa-blue border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
                   Gemini formulating dispatch checklist...
                 </div>
               ) : (
@@ -340,7 +358,7 @@ export default function OrganizerDashboard() {
                       <span className="text-[9px] font-bold text-fifa-emerald uppercase block tracking-wider">
                         {analysisError ? 'System Warning' : 'AI Summary'}
                       </span>
-                      <p className={`dark:text-slate-200 text-slate-700 leading-relaxed font-semibold ${analysisError ? 'text-fifa-red font-bold' : ''}`}>{analysisResult.summary}</p>
+                      <p className={`text-slate-200 leading-relaxed font-semibold ${analysisError ? 'text-fifa-red font-bold' : ''}`}>{analysisResult.summary}</p>
                       {analysisError && (
                         <button
                           type="button"
@@ -348,7 +366,9 @@ export default function OrganizerDashboard() {
                             const inc = incidents.find(i => i.id === selectedIncId);
                             if (inc) handleAnalyzeIncident(inc);
                           }}
-                          className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-2 py-1 rounded text-[10px]"
+                          aria-label="Retry incident telemetry analysis"
+                          title="Retry incident telemetry analysis"
+                          className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-2 py-1 rounded text-[10px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
                         >
                           🔄 Retry Telemetry
                         </button>
@@ -357,17 +377,17 @@ export default function OrganizerDashboard() {
 
                     <div>
                       <span className="text-[9px] font-bold text-fifa-gold uppercase block tracking-wider">Suggested Actions</span>
-                      <ul className="list-disc pl-4 mt-1.5 space-y-1 text-slate-300">
+                      <ul className="list-disc pl-4 mt-1.5 space-y-1 text-slate-200">
                         {analysisResult.suggestedActions?.map((act, i) => (
-                          <li key={i} className="dark:text-slate-300 text-slate-600 leading-relaxed">{act}</li>
+                          <li key={i} className="text-slate-200 leading-relaxed font-semibold">{act}</li>
                         ))}
                       </ul>
                     </div>
 
                     <div className="flex justify-between items-center pt-2 border-t border-slate-200/50 dark:border-white/5">
                       <div>
-                        <span className="text-[9px] font-bold text-fifa-blue uppercase block">Staff Requested</span>
-                        <span className="font-bold text-slate-800 dark:text-white text-[11px]">{analysisResult.staffNeeded}</span>
+                        <span className="text-[9px] font-bold text-fifa-blue dark:text-blue-400 uppercase block">Staff Requested</span>
+                        <span className="font-bold text-slate-200 dark:text-white text-[11px]">{analysisResult.staffNeeded}</span>
                       </div>
                       
                       <button
@@ -385,7 +405,9 @@ export default function OrganizerDashboard() {
                             console.error(e);
                           }
                         }}
-                        className="bg-fifa-blue text-white px-3 py-1.5 rounded-lg font-bold hover:bg-blue-600 transition-colors"
+                        aria-label="Push AI recommendations to dispatch crew"
+                        title="Push AI recommendations to dispatch crew"
+                        className="bg-fifa-blue text-white px-3 py-1.5 rounded-lg font-bold hover:bg-blue-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold cursor-pointer"
                       >
                         Push to Crew
                       </button>

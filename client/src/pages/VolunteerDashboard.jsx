@@ -156,14 +156,15 @@ export default function VolunteerDashboard() {
             {/* Language Selector & CTA */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
               <div className="flex items-center gap-2 bg-slate-100 dark:bg-white/5 py-1.5 px-3 rounded-xl border border-slate-200 dark:border-white/10">
-                <span className="text-xs text-slate-400 font-bold">Target Language:</span>
+                <label htmlFor="target-lang-select" className="text-xs text-slate-700 dark:text-slate-300 font-bold">Target Language:</label>
                 <select
+                  id="target-lang-select"
                   value={targetLang}
                   onChange={(e) => setTargetLang(e.target.value)}
-                  className="bg-transparent text-xs font-bold dark:text-slate-200 text-slate-700 border-none p-0 focus:ring-0 focus:outline-none cursor-pointer"
+                  className="bg-transparent text-xs font-bold dark:text-slate-200 text-slate-850 border-none p-0 focus:ring-2 focus:ring-fifa-gold focus:outline-none cursor-pointer"
                 >
                   {['Spanish', 'French', 'German', 'Arabic', 'Japanese', 'Portuguese'].map(lang => (
-                    <option key={lang} value={lang} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+                    <option key={lang} value={lang} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">
                       {lang}
                     </option>
                   ))}
@@ -173,13 +174,15 @@ export default function VolunteerDashboard() {
               <button
                 onClick={() => handleTranslate()}
                 disabled={transLoading || !transInput.trim()}
-                className="bg-fifa-emerald hover:bg-emerald-600 text-white font-bold text-xs py-2 px-5 rounded-xl flex items-center gap-1.5 transition-all shadow"
+                aria-label="Translate query text"
+                title="Translate query text"
+                className="bg-fifa-emerald hover:bg-emerald-600 text-white font-bold text-xs py-2 px-5 rounded-xl flex items-center gap-1.5 transition-all shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
               >
                 {transLoading ? (
                   <span>Translating...</span>
                 ) : (
                   <>
-                    <Sparkles className="w-3.5 h-3.5 text-fifa-gold" /> Translate
+                    <Sparkles className="w-3.5 h-3.5 text-amber-900 dark:text-fifa-gold" aria-hidden="true" /> Translate
                   </>
                 )}
               </button>
@@ -188,15 +191,17 @@ export default function VolunteerDashboard() {
             {/* Translation Output */}
             {transOutput && (
               <div className="mt-3 bg-fifa-emerald/5 border border-fifa-emerald/25 p-4 rounded-xl">
-                <span className="text-[10px] text-fifa-emerald font-extrabold uppercase tracking-wider block mb-1">
+                <span className="text-[10px] text-emerald-800 dark:text-fifa-emerald font-extrabold uppercase tracking-wider block mb-1">
                   {transError ? 'System Warning' : `Translation (${targetLang})`}
                 </span>
-                <p className={`text-sm dark:text-slate-200 text-slate-700 font-bold leading-relaxed ${transError ? 'text-fifa-red font-bold' : ''}`}>{transOutput}</p>
+                <p className={`text-sm dark:text-slate-200 text-slate-800 font-bold leading-relaxed ${transError ? 'text-red-700 dark:text-fifa-red font-bold' : ''}`}>{transOutput}</p>
                 {transError && (
                   <button
                     type="button"
                     onClick={() => handleTranslate()}
-                    className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] tracking-wide"
+                    aria-label="Try translation again"
+                    title="Try translation again"
+                    className="mt-2 bg-fifa-blue hover:bg-blue-600 text-white font-bold px-3 py-1.5 rounded-lg text-[10px] tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold"
                   >
                     🔄 Try Again
                   </button>
@@ -220,9 +225,18 @@ export default function VolunteerDashboard() {
               <div
                 key={task.id}
                 onClick={() => handleToggleTask(task.id, task.status)}
-                className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all flex justify-between items-start gap-4 hover:scale-[1.01] ${
+                role="button"
+                tabIndex={0}
+                aria-label={`Task: ${task.title}. Status: ${task.status}. Click to change status.`}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleToggleTask(task.id, task.status);
+                  }
+                }}
+                className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all flex justify-between items-start gap-4 hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold ${
                   task.status === 'Completed'
-                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 dark:text-emerald-300'
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-850 dark:text-emerald-300'
                     : task.status === 'In Progress'
                     ? 'bg-blue-500/10 border-blue-500/30 text-blue-800 dark:text-blue-300'
                     : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10'
@@ -230,20 +244,20 @@ export default function VolunteerDashboard() {
               >
                 <div className="space-y-1">
                   <div className="font-extrabold flex items-center gap-1.5">
-                    <span className="text-[10px] uppercase font-bold text-slate-400">Task {task.id}</span>
+                    <span className="text-[10px] uppercase font-bold text-slate-600 dark:text-slate-300">Task {task.id}</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
                     <span className="dark:text-white text-slate-800">{task.title}</span>
                   </div>
-                  <p className="text-slate-400 leading-normal">{task.description}</p>
+                  <p className="text-slate-600 dark:text-slate-300 leading-normal font-semibold">{task.description}</p>
                 </div>
 
                 <div className="flex-shrink-0 flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded-md font-bold text-[9px] uppercase ${
                     task.status === 'Completed'
-                      ? 'bg-emerald-500/20 text-emerald-600'
+                      ? 'bg-emerald-500/20 text-emerald-700'
                       : task.status === 'In Progress'
-                      ? 'bg-blue-500/20 text-blue-500'
-                      : 'bg-slate-200 dark:bg-white/10 text-slate-500'
+                      ? 'bg-blue-500/20 text-blue-600'
+                      : 'bg-slate-200 dark:bg-white/10 text-slate-700'
                   }`}>
                     {task.status}
                   </span>
@@ -261,7 +275,7 @@ export default function VolunteerDashboard() {
         {/* Log recovered item form */}
         <GlassCard className="p-5">
           <h2 className="text-sm font-extrabold mb-3 flex items-center gap-1.5 dark:text-white">
-            <Archive className="text-fifa-gold w-4 h-4" /> Register Recovered Item
+            <Archive className="text-amber-900 dark:text-fifa-gold w-4 h-4" aria-hidden="true" /> Register Recovered Item
           </h2>
           
           <form onSubmit={handleFoundSubmit} className="space-y-3">
@@ -273,8 +287,10 @@ export default function VolunteerDashboard() {
                 value={lfItem}
                 onChange={(e) => setLfItem(e.target.value)}
                 placeholder="Item Name (e.g. Wallet, Scarf)"
+                aria-label="Item Name"
+                title="Item Name"
                 required
-                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white font-semibold"
               />
             </div>
 
@@ -286,8 +302,10 @@ export default function VolunteerDashboard() {
                 value={lfDesc}
                 onChange={(e) => setLfDesc(e.target.value)}
                 placeholder="Description (color, markings, details)"
+                aria-label="Detailed Description"
+                title="Detailed Description"
                 required
-                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+                className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white font-semibold"
               />
             </div>
 
@@ -298,12 +316,14 @@ export default function VolunteerDashboard() {
                   id="found-cat"
                   value={lfCategory}
                   onChange={(e) => setLfCategory(e.target.value)}
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:outline-none dark:text-white cursor-pointer"
+                  aria-label="Item Category"
+                  title="Item Category"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white cursor-pointer font-semibold"
                 >
-                  <option value="Electronics">Electronics</option>
-                  <option value="Wallet/ID">Wallet/ID</option>
-                  <option value="Apparel">Apparel</option>
-                  <option value="Keys">Keys</option>
+                  <option value="Electronics" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Electronics</option>
+                  <option value="Wallet/ID" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Wallet/ID</option>
+                  <option value="Apparel" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Apparel</option>
+                  <option value="Keys" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Keys</option>
                 </select>
               </div>
 
@@ -315,7 +335,9 @@ export default function VolunteerDashboard() {
                   value={lfLocation}
                   onChange={(e) => setLfLocation(e.target.value)}
                   placeholder="Location Found"
-                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-fifa-emerald focus:outline-none dark:text-white"
+                  aria-label="Location Found"
+                  title="Location Found"
+                  className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white font-semibold"
                 />
               </div>
             </div>
@@ -323,9 +345,11 @@ export default function VolunteerDashboard() {
             <button
               type="submit"
               disabled={lfLoading}
-              className="w-full bg-fifa-emerald hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow"
+              aria-label="Log recovered item"
+              title="Log recovered item"
+              className="w-full bg-fifa-emerald hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fifa-gold cursor-pointer"
             >
-              <PlusCircle className="w-3.5 h-3.5" /> Log Item
+              <PlusCircle className="w-3.5 h-3.5" aria-hidden="true" /> Log Item
             </button>
           </form>
         </GlassCard>
@@ -336,12 +360,12 @@ export default function VolunteerDashboard() {
             <h2 className="text-sm font-extrabold flex items-center gap-1.5 dark:text-white">
               📂 Recovered Item Registry
             </h2>
-            <span className="text-[10px] text-slate-400">{lostAndFound.length} logged</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-300 font-semibold">{lostAndFound.length} logged</span>
           </div>
 
           {/* Search bar */}
           <div className="relative mb-3">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5" aria-hidden="true" />
             <label htmlFor="search-registry" className="sr-only">Search recovered items</label>
             <input
               id="search-registry"
@@ -349,26 +373,28 @@ export default function VolunteerDashboard() {
               value={lfSearch}
               onChange={(e) => setLfSearch(e.target.value)}
               placeholder="Search items, tags..."
-              className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl pl-8 pr-3 py-2 text-[10px] focus:outline-none dark:text-white"
+              aria-label="Search recovered items"
+              title="Search recovered items"
+              className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl pl-8 pr-3 py-2 text-[10px] focus:outline-none focus:ring-2 focus:ring-fifa-gold dark:text-white font-semibold"
             />
           </div>
 
           {/* Table list */}
           <div className="space-y-2.5 max-h-56 overflow-y-auto scrollbar-thin">
             {filteredLF.length === 0 ? (
-              <div className="text-center py-4 text-xs text-slate-400">No items match search filter.</div>
+              <div className="text-center py-4 text-xs text-slate-600 dark:text-slate-300 font-semibold">No items match search filter.</div>
             ) : (
               filteredLF.map(item => (
                 <div key={item.id} className="bg-slate-100 dark:bg-white/5 border border-slate-200/50 dark:border-white/10 p-2.5 rounded-xl text-xs">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-extrabold text-slate-800 dark:text-white">{item.item}</span>
-                    <span className="px-1.5 py-0.5 rounded bg-fifa-gold/10 text-fifa-gold text-[9px] font-bold uppercase">{item.category}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-fifa-gold/10 text-amber-950 dark:text-fifa-gold text-[9px] font-bold uppercase">{item.category}</span>
                   </div>
-                  <p className="text-slate-400 leading-normal mb-1">{item.description}</p>
-                  <div className="flex items-center gap-2 text-[10px] text-slate-500 font-medium">
-                    <MapPin className="w-3 h-3 text-fifa-blue" /> {item.locationFound}
-                    <span className="text-slate-400">•</span>
-                    <Clock className="w-3 h-3" /> {item.dateAdded}
+                  <p className="text-slate-600 dark:text-slate-300 leading-normal mb-1 font-semibold">{item.description}</p>
+                  <div className="flex items-center gap-2 text-[10px] text-slate-700 dark:text-slate-300 font-semibold">
+                    <MapPin className="w-3 h-3 text-fifa-blue dark:text-blue-400" aria-hidden="true" /> {item.locationFound}
+                    <span className="text-slate-400" aria-hidden="true">•</span>
+                    <Clock className="w-3 h-3" aria-hidden="true" /> {item.dateAdded}
                   </div>
                 </div>
               ))

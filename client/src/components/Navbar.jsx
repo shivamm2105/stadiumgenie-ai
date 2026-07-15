@@ -27,7 +27,7 @@ export default function Navbar() {
           aria-live="assertive"
           className="bg-fifa-red text-white py-2.5 px-4 text-center font-bold text-sm tracking-wide flex items-center justify-center gap-2 animate-pulse shadow-inner"
         >
-          <ShieldAlert className="w-5 h-5 flex-shrink-0" />
+          <ShieldAlert className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
           <span>EMERGENCY ALERT: {matchInfo.emergencyAlert}</span>
         </div>
       )}
@@ -46,21 +46,21 @@ export default function Navbar() {
             <span className="font-display font-extrabold text-lg md:text-xl tracking-tight bg-gradient-to-r from-fifa-emerald via-fifa-blue to-fifa-gold bg-clip-text text-transparent">
               StadiumGenie
             </span>
-            <span className="ml-1 text-[10px] uppercase font-bold tracking-widest text-fifa-emerald">
+            <span className="ml-1 text-[10px] uppercase font-bold tracking-widest text-emerald-800 dark:text-fifa-emerald">
               AI 2026
             </span>
           </div>
         </div>
 
         {/* Live Match Summary Bar */}
-        <div className="hidden lg:flex items-center gap-3 bg-slate-100 dark:bg-white/5 py-1.5 px-3.5 rounded-full border border-slate-200 dark:border-white/5 text-xs font-semibold text-slate-600 dark:text-slate-300">
-          <span className="flex items-center gap-1 text-fifa-emerald font-bold">
-            <Radio className="w-3.5 h-3.5 animate-pulse" /> Live Telemetry
+        <div className="hidden lg:flex items-center gap-3 bg-slate-100 dark:bg-white/5 py-1.5 px-3.5 rounded-full border border-slate-200 dark:border-white/5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <span className="flex items-center gap-1 text-emerald-800 dark:text-fifa-emerald font-bold">
+            <Radio className="w-3.5 h-3.5 animate-pulse" aria-hidden="true" /> Live Telemetry
           </span>
           <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-white/20"></span>
-          <span>{matchInfo.teams?.home} vs {matchInfo.teams?.away}</span>
+          <span className="text-slate-800 dark:text-slate-200">{matchInfo.teams?.home} vs {matchInfo.teams?.away}</span>
           <span className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-white/20"></span>
-          <span className="text-fifa-gold font-bold">Kickoff in {matchInfo.timeToKickoff} min</span>
+          <span className="text-amber-900 dark:text-fifa-gold font-bold">Kickoff in {matchInfo.timeToKickoff} min</span>
         </div>
 
         {/* User Actions & Role Selector */}
@@ -73,7 +73,7 @@ export default function Navbar() {
               value={role}
               onChange={(e) => setRole(e.target.value)}
               onMouseEnter={(e) => handleSpeakHover(e, `Currently set to ${role} view. Select another role here.`)}
-              className="bg-transparent dark:text-slate-200 text-slate-700 text-xs font-bold py-1 px-2.5 rounded-lg border-0 focus:ring-0 cursor-pointer"
+              className="bg-transparent dark:text-slate-200 text-slate-800 text-xs font-bold py-1 px-2.5 rounded-lg border-0 focus:ring-2 focus:ring-fifa-gold cursor-pointer"
             >
               {rolesList.map(r => (
                 <option key={r.value} value={r.value} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">
@@ -87,10 +87,11 @@ export default function Navbar() {
           <button
             onClick={toggleTheme}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
             onMouseEnter={(e) => handleSpeakHover(e, isDark ? "Switch to light mode" : "Switch to dark mode")}
-            className="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all focus:ring-2 focus:ring-fifa-gold"
+            className="p-2 text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all focus:ring-2 focus:ring-fifa-gold"
           >
-            {isDark ? <Sun className="w-5 h-5 text-fifa-gold" /> : <Moon className="w-5 h-5" />}
+            {isDark ? <Sun className="w-5 h-5 text-fifa-gold" aria-hidden="true" /> : <Moon className="w-5 h-5" aria-hidden="true" />}
           </button>
         </div>
       </header>
