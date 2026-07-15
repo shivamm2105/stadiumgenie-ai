@@ -66,8 +66,12 @@ app.use((req, res, next) => {
 // Global error handler
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 StadiumGenie Operations Backend running on port ${PORT}`);
-  console.log(`📡 Health Check available at http://localhost:${PORT}/health`);
-});
+// Start server if not running tests
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`🚀 StadiumGenie Operations Backend running on port ${PORT}`);
+    console.log(`📡 Health Check available at http://localhost:${PORT}/health`);
+  });
+}
+
+export default app;
