@@ -1,7 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { ApiService } from '../services/api';
 
-const StadiumStateContext = createContext();
+export const StadiumStateContext = createContext();
 
 export function StadiumStateProvider({ children }) {
   const [data, setData] = useState({
@@ -54,8 +54,4 @@ export function StadiumStateProvider({ children }) {
       {children}
     </StadiumStateContext.Provider>
   );
-}
-
-export function useStadiumState() {
-  return useContext(StadiumStateContext);
 }

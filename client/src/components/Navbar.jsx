@@ -1,9 +1,10 @@
 import React from 'react';
-import { useUser } from '../context/UserContext';
-import { useTheme } from '../context/ThemeContext';
-import { useAccessibility } from '../context/AccessibilityContext';
-import { useStadiumState } from '../context/StadiumStateContext';
+import { useUser } from '../hooks/useUser';
+import { useTheme } from '../hooks/useTheme';
+import { useAccessibility } from '../hooks/useAccessibility';
+import { useStadiumState } from '../hooks/useStadiumState';
 import { Sun, Moon, ShieldAlert, Radio } from 'lucide-react';
+import { USER_ROLES } from '../constants/stadiumConstants';
 
 export default function Navbar() {
   const { role, setRole } = useUser();
@@ -11,12 +12,7 @@ export default function Navbar() {
   const { handleSpeakHover } = useAccessibility();
   const { matchInfo } = useStadiumState();
 
-  const rolesList = [
-    { value: 'fan', label: 'Fan Mode' },
-    { value: 'organizer', label: 'Organizer Command' },
-    { value: 'volunteer', label: 'Volunteer Hub' },
-    { value: 'staff', label: 'Staff Portal' }
-  ];
+  const rolesList = USER_ROLES;
 
   return (
     <div className="sticky top-0 z-40 w-full transition-all duration-300">

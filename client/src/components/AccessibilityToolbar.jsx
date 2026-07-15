@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '../hooks/useAccessibility';
 import { Accessibility, Eye, Type, Volume2, X } from 'lucide-react';
 import GlassCard from './GlassCard';
 

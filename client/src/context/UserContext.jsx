@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-const UserContext = createContext();
+export const UserContext = createContext();
 
 export function UserProvider({ children }) {
   // Support switching roles easily for demo evaluation: 'fan', 'organizer', 'volunteer', 'staff'
@@ -35,8 +35,4 @@ export function UserProvider({ children }) {
       {children}
     </UserContext.Provider>
   );
-}
-
-export function useUser() {
-  return useContext(UserContext);
 }

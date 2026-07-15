@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-const AccessibilityContext = createContext();
+export const AccessibilityContext = createContext();
 
 export function AccessibilityProvider({ children }) {
   const [highContrast, setHighContrast] = useState(() => {
@@ -105,8 +105,4 @@ export function AccessibilityProvider({ children }) {
       {children}
     </AccessibilityContext.Provider>
   );
-}
-
-export function useAccessibility() {
-  return useContext(AccessibilityContext);
 }

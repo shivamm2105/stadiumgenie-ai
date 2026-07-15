@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useStadiumState } from '../context/StadiumStateContext';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useStadiumState } from '../hooks/useStadiumState';
+import { useAccessibility } from '../hooks/useAccessibility';
 import { AiService, ApiService } from '../services/api';
+import { TRANSIT_PREFERENCES, DIETARY_PREFERENCES } from '../constants/stadiumConstants';
 import GlassCard from '../components/GlassCard';
 import { 
   Send, Compass, AlertOctagon, Utensils, 
@@ -438,7 +439,7 @@ export default function FanDashboard() {
 
           <div className="flex flex-col gap-3">
             <div className="flex gap-2">
-              {['None', 'Vegan', 'Gluten-Free', 'Carnivore'].map(pref => (
+              {DIETARY_PREFERENCES.map(pref => (
                 <button
                   key={pref}
                   type="button"
@@ -517,7 +518,7 @@ export default function FanDashboard() {
             </div>
 
             <div className="flex gap-2">
-              {['Metro', 'Bus', 'Rideshare'].map(pref => (
+              {TRANSIT_PREFERENCES.map(pref => (
                 <button
                   key={pref}
                   type="button"

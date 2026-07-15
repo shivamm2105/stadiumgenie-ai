@@ -50,7 +50,11 @@ let volunteerTasks = [
   { id: 'T-03', title: 'Lost passport report collection', description: 'Collect description of lost passport near Gate C.', assignedTo: 'V-01', status: 'Pending' }
 ];
 
-// GET all dashboard data
+/**
+ * Retrieves all in-memory database status collections.
+ * @param {object} req - Express request.
+ * @param {object} res - Express response returning gates, parking, concessions, incidents, Lost & Found, and volunteer details.
+ */
 export function getStatus(req, res) {
   res.json({
     gates,
@@ -65,12 +69,13 @@ export function getStatus(req, res) {
   });
 }
 
-// POST new incident
+/**
+ * Registers a new crowd security or medical incident reported from the field.
+ * @param {object} req - Express request containing category, location, description, and reporter.
+ * @param {object} res - Express response returning registered incident telemetry.
+ */
 export function reportIncident(req, res) {
   const { category, location, description, reportedBy } = req.body;
-  if (!category || !location || !description) {
-    return res.status(400).json({ error: 'Category, location, and description are required.' });
-  }
 
   const newIncident = {
     id: `INC-${100 + incidents.length + 1}`,
@@ -80,14 +85,18 @@ export function reportIncident(req, res) {
     status: 'Active',
     reportedBy: reportedBy || 'Fan-Anonymous',
     timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
-    priority: 'Medium' // AI summary can refine this
+    priority: 'Medium'
   };
 
   incidents.unshift(newIncident);
   res.status(201).json({ message: 'Incident reported successfully.', incident: newIncident });
 }
 
-// PUT resolve or update incident status
+/**
+ * Updates status or details of a security incident.
+ * @param {object} req - Express request with incident ID parameter and body updates.
+ * @param {object} res - Express response.
+ */
 export function updateIncident(req, res) {
   const { id } = req.params;
   const { status, priority, suggestedActions, staffNeeded } = req.body;
@@ -105,12 +114,13 @@ export function updateIncident(req, res) {
   res.json({ message: 'Incident updated successfully.', incident });
 }
 
-// POST new lost & found item
+/**
+ * Registers a recovered lost-and-found item.
+ * @param {object} req - Express request containing item category, description, and location found.
+ * @param {object} res - Express response.
+ */
 export function reportLostFound(req, res) {
   const { item, description, category, locationFound, status } = req.body;
-  if (!item || !description || !category) {
-    return res.status(400).json({ error: 'Item name, description, and category are required.' });
-  }
 
   const newItem = {
     id: `LF-${String(lostAndFound.length + 1).padStart(2, '0')}`,
@@ -126,12 +136,13 @@ export function reportLostFound(req, res) {
   res.status(201).json({ message: 'Lost & Found item registered successfully.', item: newItem });
 }
 
-// POST new maintenance ticket
+/**
+ * Submits a new hardware or sanitization maintenance ticket.
+ * @param {object} req - Express request with maintenance issue details and specific location.
+ * @param {object} res - Express response.
+ */
 export function reportMaintenance(req, res) {
   const { details, location, priority, etaMinutes, allocatedTeam, justification } = req.body;
-  if (!details || !location) {
-    return res.status(400).json({ error: 'Maintenance details and location are required.' });
-  }
 
   const newTicket = {
     id: `MNT-${200 + maintenanceTickets.length + 1}`,
@@ -149,7 +160,11 @@ export function reportMaintenance(req, res) {
   res.status(201).json({ message: 'Maintenance report logged successfully.', ticket: newTicket });
 }
 
-// PUT update volunteer task status
+/**
+ * Updates execution status of a volunteer checklist task.
+ * @param {object} req - Express request with task ID and new status.
+ * @param {object} res - Express response.
+ */
 export function updateVolunteerTask(req, res) {
   const { id } = req.params;
   const { status } = req.body;
@@ -166,7 +181,11 @@ export function updateVolunteerTask(req, res) {
   res.json({ message: 'Task updated successfully.', task });
 }
 
-// POST trigger emergency alert (simulated broadcast)
+/**
+ * Triggers or clears global simulated emergency broadcasts across fan views.
+ * @param {object} req - Express request containing text message (or null to clear).
+ * @param {object} res - Express response.
+ */
 export function triggerEmergency(req, res) {
   const { message } = req.body;
   

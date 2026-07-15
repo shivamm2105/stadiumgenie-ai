@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useStadiumState } from '../context/StadiumStateContext';
+import { useStadiumState } from '../hooks/useStadiumState';
 import { AiService, ApiService } from '../services/api';
+import { TRANSLATION_LANGUAGES, CATEGORIES_LIST } from '../constants/stadiumConstants';
 import GlassCard from '../components/GlassCard';
 import { 
   Languages, Archive, CheckSquare, Sparkles, 
@@ -163,7 +164,7 @@ export default function VolunteerDashboard() {
                   onChange={(e) => setTargetLang(e.target.value)}
                   className="bg-transparent text-xs font-bold dark:text-slate-200 text-slate-850 border-none p-0 focus:ring-2 focus:ring-fifa-gold focus:outline-none cursor-pointer"
                 >
-                  {['Spanish', 'French', 'German', 'Arabic', 'Japanese', 'Portuguese'].map(lang => (
+                  {TRANSLATION_LANGUAGES.map(lang => (
                     <option key={lang} value={lang} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">
                       {lang}
                     </option>
@@ -320,10 +321,11 @@ export default function VolunteerDashboard() {
                   title="Item Category"
                   className="w-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-fifa-gold focus:outline-none dark:text-white cursor-pointer font-semibold"
                 >
-                  <option value="Electronics" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Electronics</option>
-                  <option value="Wallet/ID" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Wallet/ID</option>
-                  <option value="Apparel" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Apparel</option>
-                  <option value="Keys" className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">Keys</option>
+                  {CATEGORIES_LIST.map(cat => (
+                    <option key={cat} value={cat} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold">
+                      {cat}
+                    </option>
+                  ))}
                 </select>
               </div>
 

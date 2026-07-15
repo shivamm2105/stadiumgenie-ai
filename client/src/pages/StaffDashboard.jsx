@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useStadiumState } from '../context/StadiumStateContext';
+import { useStadiumState } from '../hooks/useStadiumState';
 import { AiService, ApiService } from '../services/api';
 import GlassCard from '../components/GlassCard';
 import { 

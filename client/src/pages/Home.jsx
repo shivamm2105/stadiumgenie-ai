@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from 'react';
-import { useUser } from '../context/UserContext';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useUser } from '../hooks/useUser';
+import { useAccessibility } from '../hooks/useAccessibility';
 import GlassCard from '../components/GlassCard';
 import SkeletonLoader from '../components/SkeletonLoader';
 import { Compass, ShieldAlert, Languages, Wrench, Sparkles, Award } from 'lucide-react';

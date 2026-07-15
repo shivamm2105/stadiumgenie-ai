@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import AccessibilityToolbar from '../components/AccessibilityToolbar';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '../hooks/useAccessibility';
 
 export default function MainLayout({ children }) {
   const { voiceAssistance } = useAccessibility();

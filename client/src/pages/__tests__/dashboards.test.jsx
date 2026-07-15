@@ -328,6 +328,26 @@ describe('Dashboard Integration Tests', () => {
       await screen.findByText(/Retry succeeded!/i);
     });
 
+    it('handles AI assistant chat send error and double failure retry', async () => {
+      vi.spyOn(AiService, 'askMatchAssistant')
+        .mockRejectedValueOnce(new Error('Network Fail'))
+        .mockRejectedValueOnce(new Error('Double Fail'));
+
+      renderWithProviders(<FanDashboard />);
+      const chatInput = await screen.findByPlaceholderText(/Where is Gate B/i);
+      const submitButton = screen.getByTitle(/Send query/i);
+
+      fireEvent.change(chatInput, { target: { value: 'Test double fail' } });
+      fireEvent.click(submitButton);
+
+      await screen.findByText(/Sorry, I am having trouble connecting/i);
+
+      const retryBtn = screen.getByRole('button', { name: /Retry Call/i });
+      fireEvent.click(retryBtn);
+
+      await screen.findByText(/Sorry, I am having trouble connecting/i);
+    });
+
     it('handles concession planner error and retry', async () => {
       vi.spyOn(AiService, 'getFoodRecommendation')
         .mockRejectedValueOnce(new Error('Network Fail'))

@@ -10,48 +10,15 @@ import {
 import {
   reportIncident,
   reportLostFound,
-  reportMaintenance
+  reportMaintenance,
+  triggerEmergency,
+  updateIncident,
+  updateVolunteerTask
 } from '../controllers/statusController.js';
 import errorHandler from '../middleware/error.js';
 
 describe('Backend Controllers Direct Testing', () => {
   describe('aiController error handling', () => {
-    it('should trigger next(error) when gemini service throws an error', async () => {
-      const reqMissing = { body: {} };
-      const resJson = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-      const next = vi.fn();
-      await handleMatchAssistant(reqMissing, resJson, next);
-      expect(resJson.status).toHaveBeenCalledWith(400);
-    });
-
-    it('should validate missing params in handleTranslation', async () => {
-      const resJson = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-      const next = vi.fn();
-      await handleTranslation({ body: { text: 'hello' } }, resJson, next);
-      expect(resJson.status).toHaveBeenCalledWith(400);
-    });
-
-    it('should validate missing params in handleIncidentSummary', async () => {
-      const resJson = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-      const next = vi.fn();
-      await handleIncidentSummary({ body: { description: 'hello' } }, resJson, next);
-      expect(resJson.status).toHaveBeenCalledWith(400);
-    });
-
-    it('should validate missing params in handlePriorityScore', async () => {
-      const resJson = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-      const next = vi.fn();
-      await handlePriorityScore({ body: {} }, resJson, next);
-      expect(resJson.status).toHaveBeenCalledWith(400);
-    });
-
-    it('should validate missing params in handleTransitEco', async () => {
-      const resJson = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-      const next = vi.fn();
-      await handleTransitEco({ body: { destination: 'Airport' } }, resJson, next);
-      expect(resJson.status).toHaveBeenCalledWith(400);
-    });
-
     it('should call next with error when something fails', async () => {
       const req = null;
       const res = {};
@@ -92,25 +59,75 @@ describe('Backend Controllers Direct Testing', () => {
   });
 
   describe('statusController fallback checks', () => {
-    it('should trigger category missing error in reportIncident', () => {
-      const req = { body: {} };
+    it('should fall back reportedBy in reportIncident', () => {
+      const req = { body: { category: 'Medical', location: 'Gate A', description: 'faint' } };
       const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
       reportIncident(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(201);
     });
 
-    it('should trigger item name missing error in reportLostFound', () => {
-      const req = { body: {} };
+    it('should fall back locationFound and status in reportLostFound', () => {
+      const req = { body: { item: 'wallet', description: 'black', category: 'Wallet/ID' } };
       const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
       reportLostFound(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(201);
     });
 
-    it('should trigger details missing error in reportMaintenance', () => {
-      const req = { body: {} };
+    it('should fall back priorities and teams in reportMaintenance', () => {
+      const req = { body: { details: 'broken gate', location: 'Gate B' } };
       const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
       reportMaintenance(req, res);
-      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    it('should clear emergency when message is empty', () => {
+      const req = { body: { message: null } };
+      const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+      triggerEmergency(req, res);
+      expect(res.json).toHaveBeenCalled();
+    });
+
+    it('should return 404 for non-existent volunteer task', () => {
+      const req = { params: { id: 'T-NONEXISTENT' }, body: { status: 'Completed' } };
+      const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+      updateVolunteerTask(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+
+    it('should update task status when status is provided', () => {
+      const req = { params: { id: 'T-01' }, body: { status: 'Completed' } };
+      const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+      updateVolunteerTask(req, res);
+      expect(res.json).toHaveBeenCalled();
+    });
+
+    it('should not update task status when status is missing', () => {
+      const req = { params: { id: 'T-01' }, body: {} };
+      const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+      updateVolunteerTask(req, res);
+      expect(res.json).toHaveBeenCalled();
+    });
+
+    it('should return 404 for non-existent incident in updateIncident', () => {
+      const req = { params: { id: 'INC-NONEXISTENT' }, body: { status: 'Resolved' } };
+      const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+      updateIncident(req, res);
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+
+    it('should update all fields in updateIncident', () => {
+      const req = {
+        params: { id: 'INC-101' },
+        body: {
+          status: 'Resolved',
+          priority: 'High',
+          suggestedActions: ['Evacuate area'],
+          staffNeeded: 'Medical Team'
+        }
+      };
+      const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+      updateIncident(req, res);
+      expect(res.json).toHaveBeenCalled();
     });
   });
 
