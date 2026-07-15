@@ -134,19 +134,29 @@ StadiumGenie AI/
 
 ### 1. Home / Portal Switcher
 Glassmorphic hub displaying introductory details and four cards corresponding to each portal role (Fan, Organizer, Volunteer, Staff).
+<img width="1917" height="962" alt="image" src="https://github.com/user-attachments/assets/4c9e6b5a-980b-4a5f-86a8-3fe35952cd11" />
+
 
 ### 2. Fan Companion & Interactive Navigator
 SVG pathfinder map layout displaying seating indicators in yellow, exit paths in green/blue, live entry wait times, and the AI chatbot.
+<img width="1917" height="963" alt="image" src="https://github.com/user-attachments/assets/1bde6164-b25d-44d2-9d3e-ff48f34611ec" />
+
 
 ### 3. Organizer Operations Dashboard
 Analytics charts illustrating arrival speed rates, crowd NW heatmap metrics, the incident dispatch center, and the global broadcaster panel.
+<img width="1917" height="968" alt="image" src="https://github.com/user-attachments/assets/4b89c9f3-8d52-47e9-bf45-8f3d1f7dbddb" />
+
 
 ### 4. Volunteer Translation Hub
 Side-by-side view featuring the AI translation input box, target language drop-downs, lost & found logs, and check-off rosters.
+<img width="1917" height="967" alt="image" src="https://github.com/user-attachments/assets/538d37d4-6382-4eac-a84b-97f8af5494f7" />
+
 
 ### 5. Staff Repair Logger
 A ticket form showing inputs for facilities failures, alongside the Gemini priority output card (Priority levels, ETAs, and justifications).
+<img width="1917" height="965" alt="image" src="https://github.com/user-attachments/assets/a24da5ef-f09d-4ae9-aa20-2181fd843087" />
 
+LIVE URL :  https://stadiumgenie-ai-wvbk.onrender.com/
 </details>
 
 ---
