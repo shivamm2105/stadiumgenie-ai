@@ -1,8 +1,9 @@
 // API service for StadiumGenie AI
 // Gracefully falls back to local storage client-side storage if the backend server is unreachable
 
-const STATUS_API_BASE = 'http://localhost:5000/api/status';
-const AI_API_BASE = 'http://localhost:5000/api/ai';
+const API_BASE = import.meta.env.VITE_API_URL || '';
+const STATUS_API_BASE = `${API_BASE}/api/status`;
+const AI_API_BASE = `${API_BASE}/api/ai`;
 
 // Initial local fallback data structure
 let localState = {
